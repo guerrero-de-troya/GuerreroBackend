@@ -70,9 +70,6 @@ class AuthService
             throw new AuthenticationException('Credenciales inválidas.');
         }
 
-        // Eliminar todos los tokens anteriores
-        $this->userRepository->revokeAllTokens($user);
-
         $token = $this->userRepository->createToken($user);
 
         return [
