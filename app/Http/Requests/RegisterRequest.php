@@ -29,7 +29,6 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', Password::defaults(), 'confirmed'],
         ];
@@ -43,9 +42,6 @@ class RegisterRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => 'El nombre es obligatorio.',
-            'name.string' => 'El nombre debe ser una cadena de texto.',
-            'name.max' => 'El nombre no puede exceder 255 caracteres.',
             'email.required' => 'El email es obligatorio.',
             'email.email' => 'El email debe ser una dirección válida.',
             'email.unique' => 'El email ya está registrado.',

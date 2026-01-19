@@ -21,7 +21,6 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var list<string>
      */
     protected $fillable = [
-        'name',
         'email',
         'password',
         'persona_id',
@@ -33,7 +32,6 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var list<string>
      */
     protected $uppercase = [
-        'name',
         'email',
     ];
 

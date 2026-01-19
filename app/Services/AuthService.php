@@ -34,7 +34,6 @@ class AuthService
 
         // Crear usuario con persona_id apuntando a la persona base del sistema
         $user = $this->userRepository->create([
-            'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'persona_id' => $systemPersona->id,
