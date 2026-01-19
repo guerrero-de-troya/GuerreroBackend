@@ -29,8 +29,8 @@ class AuthService
      */
     public function register(array $data): array
     {
-        // Obtener o crear persona base del sistema
-        $systemPersona = $this->personaRepository->getOrCreateSystemPersona();
+        // Obtener persona base del sistema
+        $systemPersona = $this->personaRepository->getSystemPersona();
 
         // Crear usuario con persona_id apuntando a la persona base del sistema
         $user = $this->userRepository->create([

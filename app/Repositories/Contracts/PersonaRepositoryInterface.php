@@ -13,9 +13,11 @@ use Illuminate\Database\Eloquent\Collection;
 interface PersonaRepositoryInterface extends RepositoryInterface
 {
     /**
-     * Obtener o crear la persona base del sistema
+     * Obtener la persona base del sistema
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException Si no existe la persona base
      */
-    public function getOrCreateSystemPersona(): Persona;
+    public function getSystemPersona(): Persona;
 
     /**
      * Buscar persona por ID con relaciones cargadas

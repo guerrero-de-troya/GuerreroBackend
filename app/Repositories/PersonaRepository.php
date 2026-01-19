@@ -31,51 +31,21 @@ class PersonaRepository extends BaseRepository implements PersonaRepositoryInter
     }
 
     /**
-     * Obtener o crear la persona base del sistema
+     * Obtener la persona base del sistema
      *
      * La persona base del sistema se usa como placeholder para mantener
      * integridad referencial. Los usuarios nuevos apuntan a esta persona
      * hasta que crean su perfil real.
      *
-     * NOTA: Requiere que existan registros en temas y parametros con los nombres:
-     * - Tema: 'Tipo Documento' con Parametro: 'TEMP'
-     * - Tema: 'Genero' con Parametro: 'TEMP'
-     * - Tema: 'Categoria' con Parametro: 'TEMP'
-     * - Tema: 'Ciudad' con Parametro: 'TEMP'
+     * NOTA: La persona base debe ser creada mediante el seeder PersonaBaseSeeder
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException Si no existe la persona base
      */
-    public function getOrCreateSystemPersona(): Persona
+    public function getSystemPersona(): Persona
     {
-        // Intentar obtener la persona base del sistema
-        $systemPersona = $this->model->newQuery()
+        return $this->model->newQuery()
             ->where('is_system', true)
-            ->first();
-
-        if ($systemPersona) {
-            return $systemPersona;
-        }
-
-        // Obtener ParametroTema por nombres 
-        $tipoDocumentoTemp = $this->parametroTemaRepository->findByNames('Tipo Documento', 'TEMP');
-        $generoTemp = $this->parametroTemaRepository->findByNames('Genero', 'TEMP');
-        $categoriaTemp = $this->parametroTemaRepository->findByNames('Categoria', 'TEMP');
-        $ciudadTemp = $this->parametroTemaRepository->findByNames('Ciudad', 'TEMP');
-
-        // Crear persona base del sistema
-        $systemData = [
-            'primer_nombre' => 'SYSTEM',
-            'primer_apellido' => 'BASE',
-            'id_tipo_documento' => $tipoDocumentoTemp->id,
-            'numero_documento' => 'SYSTEM_BASE',
-            'telefono' => 'SYSTEM_BASE',
-            'edad' => 0,
-            'id_genero' => $generoTemp->id,
-            'id_categoria' => $categoriaTemp->id,
-            'id_ciudad_origen' => $ciudadTemp->id,
-            'eps' => 'SYSTEM',
-            'is_system' => true,
-        ];
-
-        return $this->create($systemData);
+            ->firstOrFail();
     }
 
     /**
