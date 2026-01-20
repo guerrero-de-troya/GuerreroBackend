@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\TemaNotFoundException;
 use App\Models\Parametro;
 use App\Models\Tema;
 use Illuminate\Database\Eloquent\Collection;
@@ -17,14 +18,24 @@ class CatalogoService
 
     public function getTemaByName(string $temaName): Tema
     {
-        return Tema::where('name', $temaName)
+        $tema = Tema::where('name', $temaName)
             ->with('parametros')
-            ->firstOrFail();
+            ->first();
+
+        if ($tema === null) {
+            throw new TemaNotFoundException($temaName);
+        }
+
+        return $tema;
     }
 
     public function getParametrosByTema(string $temaName): Collection
     {
-        $tema = Tema::where('name', $temaName)->firstOrFail();
+        $tema = Tema::where('name', $temaName)->first();
+
+        if ($tema === null) {
+            throw new TemaNotFoundException($temaName);
+        }
 
         return $tema->parametros;
     }

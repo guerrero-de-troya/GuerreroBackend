@@ -13,45 +13,29 @@ class UbicacionController extends BaseController
 
     public function paises(): JsonResponse
     {
-        try {
-            $paises = $this->ubicacionService->getPaises();
+        $paises = $this->ubicacionService->getPaises();
 
-            return $this->success($paises, 'Países obtenidos exitosamente');
-        } catch (\Exception $e) {
-            return $this->error('Error al obtener países: '.$e->getMessage(), 500);
-        }
+        return $this->success($paises, 'Países obtenidos exitosamente');
     }
 
     public function departamentos(): JsonResponse
     {
-        try {
-            $departamentos = $this->ubicacionService->getDepartamentos();
+        $departamentos = $this->ubicacionService->getDepartamentos();
 
-            return $this->success($departamentos, 'Departamentos obtenidos exitosamente');
-        } catch (\Exception $e) {
-            return $this->error('Error al obtener departamentos: '.$e->getMessage(), 500);
-        }
+        return $this->success($departamentos, 'Departamentos obtenidos exitosamente');
     }
 
     public function departamentosByPais(int $paisId): JsonResponse
     {
-        try {
-            $departamentos = $this->ubicacionService->getDepartamentosByPais($paisId);
+        $departamentos = $this->ubicacionService->getDepartamentosByPais($paisId);
 
-            return $this->success($departamentos, 'Departamentos obtenidos exitosamente');
-        } catch (\Exception $e) {
-            return $this->error('Error al obtener departamentos: '.$e->getMessage(), 500);
-        }
+        return $this->success($departamentos, 'Departamentos obtenidos exitosamente');
     }
 
     public function municipiosByDepartamento(int $departamentoId): JsonResponse
     {
-        try {
-            $municipios = $this->ubicacionService->getMunicipiosByDepartamento($departamentoId);
+        $municipios = $this->ubicacionService->getMunicipiosByDepartamento($departamentoId);
 
-            return $this->success($municipios, 'Municipios obtenidos exitosamente');
-        } catch (\Exception $e) {
-            return $this->error('Error al obtener municipios: '.$e->getMessage(), 500);
-        }
+        return $this->success($municipios, 'Municipios obtenidos exitosamente');
     }
 }

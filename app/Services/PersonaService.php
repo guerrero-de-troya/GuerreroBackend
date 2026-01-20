@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\PersonaSystemException;
 use App\Models\Persona;
 use App\Repositories\Contracts\PersonaRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
@@ -35,7 +36,7 @@ class PersonaService
         $persona = $this->personaRepository->findOrFail($id);
 
         if ($persona->is_system) {
-            throw new \DomainException('No se puede actualizar una persona del sistema.');
+            throw new PersonaSystemException('No se puede actualizar una persona del sistema.');
         }
 
         $persona = $this->personaRepository->update($id, $data);
@@ -52,7 +53,7 @@ class PersonaService
         $persona = $this->personaRepository->findOrFail($id);
 
         if ($persona->is_system) {
-            throw new \DomainException('No se puede eliminar una persona del sistema.');
+            throw new PersonaSystemException('No se puede eliminar una persona del sistema.');
         }
 
         return $this->personaRepository->delete($id);

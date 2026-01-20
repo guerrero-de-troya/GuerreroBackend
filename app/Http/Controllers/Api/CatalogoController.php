@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Services\CatalogoService;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 
 class CatalogoController extends BaseController
@@ -14,44 +13,28 @@ class CatalogoController extends BaseController
 
     public function temas(): JsonResponse
     {
-        try {
-            $temas = $this->catalogoService->getAllTemas();
+        $temas = $this->catalogoService->getAllTemas();
 
-            return $this->success($temas, 'Temas obtenidos exitosamente');
-        } catch (\Exception $e) {
-            return $this->error('Error al obtener temas: '.$e->getMessage(), 500);
-        }
+        return $this->success($temas, 'Temas obtenidos exitosamente');
     }
 
     public function parametrosPorTema(string $temaName): JsonResponse
     {
-        try {
-            $tema = $this->catalogoService->getTemaByName($temaName);
+        $tema = $this->catalogoService->getTemaByName($temaName);
 
-            return $this->success(
-                [
-                    'tema' => $tema->name,
-                    'parametros' => $tema->parametros,
-                ],
-                'Parámetros obtenidos exitosamente'
-            );
-        } catch (ModelNotFoundException $e) {
-            return $this->error("Tema '{$temaName}' no encontrado", 404);
-        } catch (\Exception $e) {
-            return $this->error('Error al obtener parámetros: '.$e->getMessage(), 500);
-        }
+        return $this->success(
+            [
+                'tema' => $tema->name,
+                'parametros' => $tema->parametros,
+            ],
+            'Parámetros obtenidos exitosamente'
+        );
     }
 
     public function parametros(string $temaName): JsonResponse
     {
-        try {
-            $parametros = $this->catalogoService->getParametrosByTema($temaName);
+        $parametros = $this->catalogoService->getParametrosByTema($temaName);
 
-            return $this->success($parametros, 'Parámetros obtenidos exitosamente');
-        } catch (ModelNotFoundException $e) {
-            return $this->error("Tema '{$temaName}' no encontrado", 404);
-        } catch (\Exception $e) {
-            return $this->error('Error al obtener parámetros: '.$e->getMessage(), 500);
-        }
+        return $this->success($parametros, 'Parámetros obtenidos exitosamente');
     }
 }
