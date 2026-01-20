@@ -37,7 +37,9 @@ class Persona extends Model
         'camisa',
         'id_talla',
         'id_ciudad_origen',
-        'eps',
+        'id_eps',
+        'departamento_id',
+        'municipio_id',
         'is_system',
     ];
 
@@ -61,7 +63,6 @@ class Persona extends Model
         'numero_documento',
         'telefono',
         'camisa',
-        'eps',
     ];
 
     /**
@@ -128,6 +129,36 @@ class Persona extends Model
     public function ciudadOrigen(): BelongsTo
     {
         return $this->belongsTo(ParametroTema::class, 'id_ciudad_origen');
+    }
+
+    /**
+     * Obtener la EPS relacionada
+     *
+     * @return BelongsTo<ParametroTema, Persona>
+     */
+    public function eps(): BelongsTo
+    {
+        return $this->belongsTo(ParametroTema::class, 'id_eps');
+    }
+
+    /**
+     * Obtener el departamento relacionado
+     *
+     * @return BelongsTo<Departamento, Persona>
+     */
+    public function departamento(): BelongsTo
+    {
+        return $this->belongsTo(Departamento::class, 'departamento_id');
+    }
+
+    /**
+     * Obtener el municipio relacionado
+     *
+     * @return BelongsTo<Municipio, Persona>
+     */
+    public function municipio(): BelongsTo
+    {
+        return $this->belongsTo(Municipio::class, 'municipio_id');
     }
 
     /**

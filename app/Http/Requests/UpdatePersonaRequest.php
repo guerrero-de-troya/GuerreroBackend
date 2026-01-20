@@ -42,7 +42,7 @@ class UpdatePersonaRequest extends FormRequest
             'camisa' => ['nullable', 'string', 'max:255'],
             'id_talla' => ['nullable', 'exists:parametros_temas,id'],
             'id_ciudad_origen' => ['sometimes', 'exists:parametros_temas,id'],
-            'eps' => ['sometimes', 'string', 'max:255'],
+            'id_eps' => ['sometimes', 'nullable', 'exists:parametros_temas,id'],
         ];
     }
 
@@ -68,6 +68,7 @@ class UpdatePersonaRequest extends FormRequest
             'id_categoria.exists' => 'La categoría seleccionada no es válida.',
             'id_talla.exists' => 'La talla seleccionada no es válida.',
             'id_ciudad_origen.exists' => 'La ciudad de origen seleccionada no es válida.',
+            'id_eps.exists' => 'La EPS seleccionada no es válida.',
         ];
     }
 }

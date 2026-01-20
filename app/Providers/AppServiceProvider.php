@@ -2,18 +2,25 @@
 
 namespace App\Providers;
 
+use App\Repositories\Contracts\DepartamentoRepositoryInterface;
+use App\Repositories\Contracts\MunicipioRepositoryInterface;
 use App\Repositories\Contracts\ParametroRepositoryInterface;
 use App\Repositories\Contracts\ParametroTemaRepositoryInterface;
+use App\Repositories\Contracts\PaisRepositoryInterface;
 use App\Repositories\Contracts\PersonaRepositoryInterface;
 use App\Repositories\Contracts\TemaRepositoryInterface;
 use App\Repositories\Contracts\UserRepositoryInterface;
+use App\Repositories\DepartamentoRepository;
+use App\Repositories\MunicipioRepository;
 use App\Repositories\ParametroRepository;
 use App\Repositories\ParametroTemaRepository;
+use App\Repositories\PaisRepository;
 use App\Repositories\PersonaRepository;
 use App\Repositories\TemaRepository;
 use App\Repositories\UserRepository;
 use App\Services\AuthService;
 use App\Services\PersonaService;
+use App\Services\UbicacionService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -43,6 +50,14 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(PersonaService::class, function ($app) {
             return new PersonaService(
                 $app->make(PersonaRepositoryInterface::class)
+            );
+        });
+
+        $this->app->singleton(UbicacionService::class, function ($app) {
+            return new UbicacionService(
+                $app->make(PaisRepositoryInterface::class),
+                $app->make(DepartamentoRepositoryInterface::class),
+                $app->make(MunicipioRepositoryInterface::class)
             );
         });
     }

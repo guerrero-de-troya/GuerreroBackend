@@ -26,7 +26,7 @@ class PersonaController extends BaseController
     public function index(): JsonResponse
     {
         try {
-            $relations = ['tipoDocumento', 'genero', 'categoria', 'talla', 'ciudadOrigen'];
+            $relations = ['tipoDocumento', 'genero', 'categoria', 'talla', 'ciudadOrigen', 'eps'];
             $personas = $this->personaService->getAllPersonas($relations);
 
             return $this->success(
@@ -44,7 +44,7 @@ class PersonaController extends BaseController
     public function show(int $id): JsonResponse
     {
         try {
-            $relations = ['tipoDocumento', 'genero', 'categoria', 'talla', 'ciudadOrigen', 'user'];
+            $relations = ['tipoDocumento', 'genero', 'categoria', 'talla', 'ciudadOrigen', 'eps', 'user'];
             $persona = $this->personaService->getPersonaById($id, $relations);
 
             return $this->success(
@@ -64,7 +64,7 @@ class PersonaController extends BaseController
     public function update(UpdatePersonaRequest $request, int $id): JsonResponse
     {
         try {
-            $relations = ['tipoDocumento', 'genero', 'categoria', 'talla', 'ciudadOrigen'];
+            $relations = ['tipoDocumento', 'genero', 'categoria', 'talla', 'ciudadOrigen', 'eps'];
             $persona = $this->personaService->updatePersona($id, $request->validated(), $relations);
 
             return $this->success(
@@ -120,7 +120,7 @@ class PersonaController extends BaseController
                 );
             }
 
-            $relations = ['tipoDocumento', 'genero', 'categoria', 'talla', 'ciudadOrigen'];
+            $relations = ['tipoDocumento', 'genero', 'categoria', 'talla', 'ciudadOrigen', 'eps'];
             $persona = $this->personaService->getPersonaById($user->persona_id, $relations);
 
             return $this->success(

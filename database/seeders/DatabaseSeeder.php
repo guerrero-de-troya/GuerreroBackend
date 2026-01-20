@@ -15,13 +15,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Crear persona base del sistema primero
-        $this->call(PersonaBaseSeeder::class);
-
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'email' => 'test@example.com',
+        $this->call([
+            TemaSeeder::class,
+            ParametroSeeder::class,
+            PersonaBaseSeeder::class,
         ]);
     }
 }

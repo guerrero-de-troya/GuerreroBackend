@@ -34,15 +34,18 @@ class PersonaResource extends JsonResource
             'camisa' => $this->camisa,
             'id_talla' => $this->id_talla,
             'id_ciudad_origen' => $this->id_ciudad_origen,
-            'eps' => $this->eps,
-            'created_at' => $this->created_at->toISOString(),
-            'updated_at' => $this->updated_at->toISOString(),
+            'id_eps' => $this->id_eps,
+            'departamento_id' => $this->departamento_id,
+            'municipio_id' => $this->municipio_id,
             'tipo_documento' => $this->whenLoaded('tipoDocumento'),
             'genero' => $this->whenLoaded('genero'),
             'categoria' => $this->whenLoaded('categoria'),
             'talla' => $this->whenLoaded('talla'),
             'ciudad_origen' => $this->whenLoaded('ciudadOrigen'),
+            'eps' => $this->whenLoaded('eps'),
             'user' => $this->whenLoaded('user'),
+            'created_at' => $this->created_at->toISOString(),
+            'updated_at' => $this->updated_at->toISOString(),
         ];
     }
 }

@@ -1,7 +1,10 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\DepartamentoController;
 use App\Http\Controllers\Api\EmailVerificationController;
+use App\Http\Controllers\Api\MunicipioController;
+use App\Http\Controllers\Api\PaisController;
 use App\Http\Controllers\Api\PasswordResetController;
 use App\Http\Controllers\Api\PersonaController;
 use Illuminate\Support\Facades\Route;
@@ -49,4 +52,18 @@ Route::middleware('auth:sanctum')->prefix('personas')->group(function () {
     Route::put('/{persona}', [PersonaController::class, 'update'])->name('personas.update');
     Route::patch('/{persona}', [PersonaController::class, 'update'])->name('personas.patch');
     Route::delete('/{persona}', [PersonaController::class, 'destroy'])->name('personas.destroy');
+});
+
+// Rutas de ubicaciones
+Route::prefix('paises')->group(function () {
+    Route::get('/', [PaisController::class, 'index'])->name('paises.index');
+});
+
+Route::prefix('departamentos')->group(function () {
+    Route::get('/', [DepartamentoController::class, 'index'])->name('departamentos.index');
+    Route::get('/pais/{paisId}', [DepartamentoController::class, 'byPais'])->name('departamentos.by-pais');
+});
+
+Route::prefix('municipios')->group(function () {
+    Route::get('/departamento/{departamentoId}', [MunicipioController::class, 'byDepartamento'])->name('municipios.by-departamento');
 });

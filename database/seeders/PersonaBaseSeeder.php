@@ -11,6 +11,7 @@ class PersonaBaseSeeder extends Seeder
 {
     use WithoutModelEvents;
 
+    private const SYSTEM_PERSONA_NAME = 'BASE';
     /**
      * Run the database seeds.
      */
@@ -29,23 +30,26 @@ class PersonaBaseSeeder extends Seeder
         $parametroTemaRepository = app(ParametroTemaRepositoryInterface::class);
 
         // Obtener ParametroTema por nombres
-        $tipoDocumentoTemp = $parametroTemaRepository->findByNames('Tipo Documento', 'TEMP');
-        $generoTemp = $parametroTemaRepository->findByNames('Genero', 'TEMP');
-        $categoriaTemp = $parametroTemaRepository->findByNames('Categoria', 'TEMP');
-        $ciudadTemp = $parametroTemaRepository->findByNames('Ciudad', 'TEMP');
+        $tipoDocumentoTemp = $parametroTemaRepository->findByNames('TIPO DOCUMENTO', 'TEMP');
+        $generoTemp = $parametroTemaRepository->findByNames('GENERO', 'TEMP');
+        $categoriaTemp = $parametroTemaRepository->findByNames('CATEGORIA', 'TEMP');
+        $ciudadTemp = $parametroTemaRepository->findByNames('CIUDAD', 'TEMP');
+        $epsTemp = $parametroTemaRepository->findByNames('EPS', 'TEMP');
 
         // Crear persona base del sistema
         Persona::create([
-            'primer_nombre' => 'SYSTEM',
-            'primer_apellido' => 'BASE',
+            'primer_nombre' => self::SYSTEM_PERSONA_NAME,
+            'primer_apellido' => self::SYSTEM_PERSONA_NAME,
             'id_tipo_documento' => $tipoDocumentoTemp->id,
-            'numero_documento' => 'SYSTEM_BASE',
-            'telefono' => 'SYSTEM_BASE',
+            'numero_documento' => self::SYSTEM_PERSONA_NAME,
+            'telefono' => self::SYSTEM_PERSONA_NAME,
             'edad' => 0,
             'id_genero' => $generoTemp->id,
             'id_categoria' => $categoriaTemp->id,
             'id_ciudad_origen' => $ciudadTemp->id,
-            'eps' => 'SYSTEM',
+            'id_eps' => $epsTemp->id,
+            'departamento_id' => null,
+            'municipio_id' => null,
             'is_system' => true,
         ]);
 
