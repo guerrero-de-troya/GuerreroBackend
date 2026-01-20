@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Persona;
-use App\Repositories\Contracts\ParametroTemaRepositoryInterface;
+use App\Services\CatalogoService;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -27,14 +27,13 @@ class PersonaBaseSeeder extends Seeder
             return;
         }
 
-        // Resolver el repositorio mediante el contenedor
-        $parametroTemaRepository = app(ParametroTemaRepositoryInterface::class);
+        // Obtener parámetros por nombres de tema y parámetro usando el service
+        $catalogoService = app(CatalogoService::class);
 
-        // Obtener ParametroTema por nombres
-        $tipoDocumentoTemp = $parametroTemaRepository->findByNames('TIPO DOCUMENTO', 'TEMP');
-        $generoTemp = $parametroTemaRepository->findByNames('GENERO', 'TEMP');
-        $categoriaTemp = $parametroTemaRepository->findByNames('CATEGORIA', 'TEMP');
-        $epsTemp = $parametroTemaRepository->findByNames('EPS', 'TEMP');
+        $tipoDocumentoTemp = $catalogoService->getParametroByTema('TIPO DOCUMENTO', 'TEMP');
+        $generoTemp = $catalogoService->getParametroByTema('GENERO', 'TEMP');
+        $nivelTemp = $catalogoService->getParametroByTema('NIVEL', 'TEMP');
+        $epsTemp = $catalogoService->getParametroByTema('EPS', 'TEMP');
 
         // Crear persona base del sistema
         Persona::create([
@@ -45,7 +44,7 @@ class PersonaBaseSeeder extends Seeder
             'telefono' => self::SYSTEM_PERSONA_NAME,
             'edad' => 0,
             'genero_id' => $generoTemp->id,
-            'categoria_id' => $categoriaTemp->id,
+            'nivel_id' => $nivelTemp->id,
             'eps_id' => $epsTemp->id,
             'pais_id' => null,
             'departamento_id' => null,

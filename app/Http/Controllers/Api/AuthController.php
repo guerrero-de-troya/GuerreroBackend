@@ -8,22 +8,16 @@ use App\Http\Resources\UserResource;
 use App\Services\AuthService;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Laravel\Sanctum\PersonalAccessToken;
 
-/**
- * Auth Controller
- *
- * Controla las peticiones HTTP relacionadas con autenticación.
- */
 class AuthController extends BaseController
 {
     public function __construct(
         private readonly AuthService $authService
     ) {}
 
-    /**
-     * Registrar un nuevo usuario
-     */
     public function register(RegisterRequest $request): JsonResponse
     {
         try {
@@ -41,9 +35,6 @@ class AuthController extends BaseController
         }
     }
 
-    /**
-     * Iniciar sesión
-     */
     public function login(LoginRequest $request): JsonResponse
     {
         try {
@@ -66,28 +57,25 @@ class AuthController extends BaseController
         }
     }
 
-    /**
-     * Cerrar sesión (token actual)
-     */
-    public function logout(): JsonResponse
+    public function logout(Request $request): JsonResponse
     {
-        try {
-            $userId = Auth::id();
-            $this->authService->logout($userId);
-
-            return $this->success(null, 'Sesión cerrada exitosamente');
-        } catch (\Exception $e) {
-            return $this->error('Error al cerrar sesión: '.$e->getMessage(), 500);
+        $token = $request->user()?->currentAccessToken();
+        if ($token instanceof PersonalAccessToken) {
+            $token->delete();
         }
+
+        return $this->success(null, 'Sesión cerrada exitosamente');
     }
 
-    /**
-     * Cerrar sesión en todos los dispositivos
-     */
-    public function logoutAll(): JsonResponse
+    public function logoutAll(Request $request): JsonResponse
     {
         try {
-            $userId = Auth::id();
+            $userId = $request->user()?->id;
+
+            if ($userId === null) {
+                return $this->error('Usuario no autenticado', 401);
+            }
+
             $this->authService->logoutAll($userId);
 
             return $this->success(null, 'Sesión cerrada en todos los dispositivos');
@@ -96,14 +84,14 @@ class AuthController extends BaseController
         }
     }
 
-    /**
-     * Obtener el usuario autenticado
-     */
     public function me(): JsonResponse
     {
         try {
-            $userId = Auth::id();
-            $user = $this->authService->getAuthenticatedUser($userId);
+            $user = Auth::user();
+
+            if ($user === null) {
+                return $this->error('Usuario no autenticado', 401);
+            }
 
             return $this->success(
                 new UserResource($user),

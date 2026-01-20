@@ -7,16 +7,8 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-/**
- * Email Verification Controller
- *
- * Controla las peticiones HTTP relacionadas con verificación de email.
- */
 class EmailVerificationController extends BaseController
 {
-    /**
-     * Reenviar notificación de verificación de email
-     */
     public function send(Request $request): JsonResponse
     {
         if ($request->user()->hasVerifiedEmail()) {
@@ -28,9 +20,6 @@ class EmailVerificationController extends BaseController
         return $this->success(null, 'Email de verificación enviado exitosamente.');
     }
 
-    /**
-     * Verificar email del usuario
-     */
     public function verify(EmailVerificationRequest $request): JsonResponse
     {
         if ($request->user()->hasVerifiedEmail()) {

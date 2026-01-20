@@ -10,27 +10,12 @@ class Parametro extends Model
 {
     use HasFactory;
 
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
     protected $table = 'parametros';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'name',
     ];
 
-    /**
-     * Obtener los temas relacionados con este parámetro
-     *
-     * @return BelongsToMany<Tema>
-     */
     public function temas(): BelongsToMany
     {
         return $this->belongsToMany(
@@ -38,6 +23,8 @@ class Parametro extends Model
             'parametros_temas',
             'parametro_id',
             'tema_id'
-        )->withTimestamps();
+        )
+            ->using(ParametroTema::class)
+            ->withTimestamps();
     }
 }

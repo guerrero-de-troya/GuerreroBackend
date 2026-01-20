@@ -9,24 +9,16 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
-/**
- * Persona Controller
- *
- * Controla las peticiones HTTP relacionadas con personas.
- */
 class PersonaController extends BaseController
 {
     public function __construct(
         private readonly PersonaService $personaService
     ) {}
 
-    /**
-     * Obtener todas las personas
-     */
     public function index(): JsonResponse
     {
         try {
-            $relations = ['tipoDocumento', 'genero', 'categoria', 'talla', 'ciudadOrigen', 'eps'];
+            $relations = ['tipoDocumento', 'genero', 'nivel', 'talla', 'eps'];
             $personas = $this->personaService->getAllPersonas($relations);
 
             return $this->success(
@@ -38,13 +30,10 @@ class PersonaController extends BaseController
         }
     }
 
-    /**
-     * Mostrar una persona específica
-     */
     public function show(int $id): JsonResponse
     {
         try {
-            $relations = ['tipoDocumento', 'genero', 'categoria', 'talla', 'ciudadOrigen', 'eps', 'user'];
+            $relations = ['tipoDocumento', 'genero', 'nivel', 'talla', 'eps', 'user'];
             $persona = $this->personaService->getPersonaById($id, $relations);
 
             return $this->success(
@@ -58,13 +47,10 @@ class PersonaController extends BaseController
         }
     }
 
-    /**
-     * Actualizar una persona existente
-     */
     public function update(UpdatePersonaRequest $request, int $id): JsonResponse
     {
         try {
-            $relations = ['tipoDocumento', 'genero', 'categoria', 'talla', 'ciudadOrigen', 'eps'];
+            $relations = ['tipoDocumento', 'genero', 'nivel', 'talla', 'eps'];
             $persona = $this->personaService->updatePersona($id, $request->validated(), $relations);
 
             return $this->success(
@@ -80,9 +66,6 @@ class PersonaController extends BaseController
         }
     }
 
-    /**
-     * Eliminar una persona
-     */
     public function destroy(int $id): JsonResponse
     {
         try {
@@ -101,9 +84,6 @@ class PersonaController extends BaseController
         }
     }
 
-    /**
-     * Obtener el perfil del usuario autenticado
-     */
     public function profile(): JsonResponse
     {
         try {
@@ -120,7 +100,7 @@ class PersonaController extends BaseController
                 );
             }
 
-            $relations = ['tipoDocumento', 'genero', 'categoria', 'talla', 'ciudadOrigen', 'eps'];
+            $relations = ['tipoDocumento', 'genero', 'nivel', 'talla', 'eps'];
             $persona = $this->personaService->getPersonaById($user->persona_id, $relations);
 
             return $this->success(

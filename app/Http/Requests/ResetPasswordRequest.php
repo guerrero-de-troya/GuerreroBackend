@@ -5,12 +5,6 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Password;
 
-/**
- * Reset Password Request
- *
- * Valida los datos para restablecer la contraseña.
- * Sigue el principio SRP (Single Responsibility).
- */
 class ResetPasswordRequest extends FormRequest
 {
     /**

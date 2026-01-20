@@ -15,29 +15,16 @@ class User extends Authenticatable implements MustVerifyEmail
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens, HasFactory, HasRoles, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'email',
         'password',
         'persona_id',
     ];
 
-    /**
-     * Los atributos que deben convertirse a mayúsculas antes de guardar
-     *
-     * @var list<string>
-     */
     protected $uppercase = [
         'email',
     ];
 
-    /**
-     * Boot del modelo
-     */
     protected static function boot(): void
     {
         parent::boot();
@@ -51,21 +38,11 @@ class User extends Authenticatable implements MustVerifyEmail
         });
     }
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
@@ -74,19 +51,11 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
-    /**
-     * Obtener la persona relacionada
-     *
-     * @return BelongsTo<Persona, User>
-     */
     public function persona(): BelongsTo
     {
         return $this->belongsTo(Persona::class, 'persona_id');
     }
 
-    /**
-     * Verificar si el usuario tiene un perfil real
-     */
     public function hasProfile(): bool
     {
         $this->loadMissing('persona');

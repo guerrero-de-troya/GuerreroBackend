@@ -2,66 +2,47 @@
 
 namespace App\Services;
 
-use App\Repositories\Contracts\DepartamentoRepositoryInterface;
-use App\Repositories\Contracts\MunicipioRepositoryInterface;
-use App\Repositories\Contracts\PaisRepositoryInterface;
+use App\Models\Departamento;
+use App\Models\Municipio;
+use App\Models\Pais;
 use Illuminate\Database\Eloquent\Collection;
 
 class UbicacionService
 {
-    public function __construct(
-        private readonly PaisRepositoryInterface $paisRepository,
-        private readonly DepartamentoRepositoryInterface $departamentoRepository,
-        private readonly MunicipioRepositoryInterface $municipioRepository
-    ) {}
-
-    /**
-     * Obtener todos los países
-     *
-     * @return Collection<int, \App\Models\Pais>
-     */
     public function getPaises(): Collection
     {
-        return $this->paisRepository->getAllOrdered();
+        return Pais::query()->orderBy('pais')->get();
     }
 
-    /**
-     * Obtener todos los departamentos
-     *
-     * @return Collection<int, \App\Models\Departamento>
-     */
     public function getDepartamentos(): Collection
     {
-        return $this->departamentoRepository->getAllOrdered();
+        return Departamento::query()
+            ->with('pais')
+            ->orderBy('departamento')
+            ->get();
     }
 
-    /**
-     * Obtener departamentos por país
-     *
-     * @return Collection<int, \App\Models\Departamento>
-     */
     public function getDepartamentosByPais(int $paisId): Collection
     {
-        return $this->departamentoRepository->getByPaisId($paisId);
+        return Departamento::query()
+            ->where('pais_id', $paisId)
+            ->orderBy('departamento')
+            ->get();
     }
 
-    /**
-     * Obtener todos los municipios
-     *
-     * @return Collection<int, \App\Models\Municipio>
-     */
     public function getMunicipios(): Collection
     {
-        return $this->municipioRepository->getAllOrdered();
+        return Municipio::query()
+            ->with('departamento')
+            ->orderBy('municipio')
+            ->get();
     }
 
-    /**
-     * Obtener municipios por departamento
-     *
-     * @return Collection<int, \App\Models\Municipio>
-     */
     public function getMunicipiosByDepartamento(int $departamentoId): Collection
     {
-        return $this->municipioRepository->getByDepartamentoId($departamentoId);
+        return Municipio::query()
+            ->where('departamento_id', $departamentoId)
+            ->orderBy('municipio')
+            ->get();
     }
 }

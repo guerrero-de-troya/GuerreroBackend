@@ -4,12 +4,6 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-/**
- * Login Request
- *
- * Valida los datos para iniciar sesión.
- * Sigue el principio SRP (Single Responsibility).
- */
 class LoginRequest extends FormRequest
 {
     /**

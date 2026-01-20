@@ -17,7 +17,7 @@ class TemaSeeder extends Seeder
             'TALLA',
             'GENERO',
             'EPS',
-            'CATEGORIA',
+            'NIVEL',
         ];
 
         foreach ($temas as $tema) {

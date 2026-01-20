@@ -4,11 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-/**
- * Update Persona Request
- *
- * Valida los datos para actualizar una persona existente.
- */
+
 class UpdatePersonaRequest extends FormRequest
 {
     /**
@@ -33,15 +29,15 @@ class UpdatePersonaRequest extends FormRequest
             'segundo_nombre' => ['nullable', 'string', 'max:255'],
             'primer_apellido' => ['sometimes', 'string', 'max:255'],
             'segundo_apellido' => ['nullable', 'string', 'max:255'],
-            'tipo_documento_id' => ['sometimes', 'exists:parametros_temas,id'],
+            'tipo_documento_id' => ['sometimes', 'exists:parametros,id'],
             'numero_documento' => ['sometimes', 'string', 'max:255', "unique:personas,numero_documento,{$personaId}"],
             'telefono' => ['sometimes', 'string', 'max:255', "unique:personas,telefono,{$personaId}"],
             'edad' => ['sometimes', 'integer', 'min:0', 'max:150'],
-            'genero_id' => ['sometimes', 'exists:parametros_temas,id'],
-            'categoria_id' => ['sometimes', 'exists:parametros_temas,id'],
+            'genero_id' => ['sometimes', 'exists:parametros,id'],
+            'nivel_id' => ['sometimes', 'nullable', 'exists:parametros,id'],
             'camisa' => ['nullable', 'string', 'max:255'],
-            'talla_id' => ['nullable', 'exists:parametros_temas,id'],
-            'eps_id' => ['sometimes', 'nullable', 'exists:parametros_temas,id'],
+            'talla_id' => ['nullable', 'exists:parametros,id'],
+            'eps_id' => ['sometimes', 'nullable', 'exists:parametros,id'],
             'pais_id' => ['sometimes', 'nullable', 'exists:paises,id'],
             'departamento_id' => ['sometimes', 'nullable', 'exists:departamentos,id'],
             'municipio_id' => ['sometimes', 'nullable', 'exists:municipios,id'],
@@ -67,7 +63,7 @@ class UpdatePersonaRequest extends FormRequest
             'edad.max' => 'La edad debe ser menor o igual a 100.',
             'tipo_documento_id.exists' => 'El tipo de documento seleccionado no es válido.',
             'genero_id.exists' => 'El género seleccionado no es válido.',
-            'categoria_id.exists' => 'La categoría seleccionada no es válida.',
+            'nivel_id.exists' => 'El nivel seleccionado no es válido.',
             'talla_id.exists' => 'La talla seleccionada no es válida.',
             'eps_id.exists' => 'La EPS seleccionada no es válida.',
             'pais_id.exists' => 'El país seleccionado no es válido.',

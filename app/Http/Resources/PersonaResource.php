@@ -5,18 +5,8 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/**
- * Persona Resource
- *
- * Transforma el modelo Persona en una respuesta JSON estructurada.
- */
 class PersonaResource extends JsonResource
 {
-    /**
-     * Transformar el recurso en un array.
-     *
-     * @return array<string, mixed>
-     */
     public function toArray(Request $request): array
     {
         return [
@@ -30,7 +20,7 @@ class PersonaResource extends JsonResource
             'telefono' => $this->telefono,
             'edad' => $this->edad,
             'genero_id' => $this->genero_id,
-            'categoria_id' => $this->categoria_id,
+            'nivel_id' => $this->nivel_id,
             'camisa' => $this->camisa,
             'talla_id' => $this->talla_id,
             'eps_id' => $this->eps_id,
@@ -39,7 +29,7 @@ class PersonaResource extends JsonResource
             'municipio_id' => $this->municipio_id,
             'tipo_documento' => $this->whenLoaded('tipoDocumento'),
             'genero' => $this->whenLoaded('genero'),
-            'categoria' => $this->whenLoaded('categoria'),
+            'nivel' => $this->whenLoaded('nivel'),
             'talla' => $this->whenLoaded('talla'),
             'eps' => $this->whenLoaded('eps'),
             'pais' => $this->whenLoaded('pais'),

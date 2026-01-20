@@ -9,30 +9,20 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 
-/**
- * Password Reset Controller
- *
- * Controla las peticiones HTTP relacionadas con restablecimiento de contraseña.
- */
 class PasswordResetController extends BaseController
 {
     public function __construct(
         private readonly UserRepositoryInterface $userRepository
     ) {}
 
-    /**
-     * Enviar email para restablecer contraseña
-     */
     public function forgot(Request $request): JsonResponse
     {
         $request->validate([
             'email' => ['required', 'string', 'email'],
         ]);
 
-        // Convertir email a mayúsculas
         $email = strtoupper($request->email);
 
-        // Verificar si el usuario existe
         if (! $this->userRepository->existsByEmail($email)) {
             return $this->success(
                 null,
@@ -57,9 +47,6 @@ class PasswordResetController extends BaseController
         );
     }
 
-    /**
-     * Restablecer contraseña
-     */
     public function reset(ResetPasswordRequest $request): JsonResponse
     {
         // Convertir email a mayúsculas

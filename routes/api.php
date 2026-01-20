@@ -1,12 +1,11 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\DepartamentoController;
+use App\Http\Controllers\Api\CatalogoController;
 use App\Http\Controllers\Api\EmailVerificationController;
-use App\Http\Controllers\Api\MunicipioController;
-use App\Http\Controllers\Api\PaisController;
 use App\Http\Controllers\Api\PasswordResetController;
 use App\Http\Controllers\Api\PersonaController;
+use App\Http\Controllers\Api\UbicacionController;
 use Illuminate\Support\Facades\Route;
 
 // Rutas públicas de autenticación
@@ -55,15 +54,16 @@ Route::middleware('auth:sanctum')->prefix('personas')->group(function () {
 });
 
 // Rutas de ubicaciones
-Route::prefix('paises')->group(function () {
-    Route::get('/', [PaisController::class, 'index'])->name('paises.index');
+Route::prefix('ubicaciones')->group(function () {
+    Route::get('/paises', [UbicacionController::class, 'paises'])->name('ubicaciones.paises');
+    Route::get('/departamentos', [UbicacionController::class, 'departamentos'])->name('ubicaciones.departamentos');
+    Route::get('/departamentos/pais/{paisId}', [UbicacionController::class, 'departamentosByPais'])->name('ubicaciones.departamentos-by-pais');
+    Route::get('/municipios/departamento/{departamentoId}', [UbicacionController::class, 'municipiosByDepartamento'])->name('ubicaciones.municipios-by-departamento');
 });
 
-Route::prefix('departamentos')->group(function () {
-    Route::get('/', [DepartamentoController::class, 'index'])->name('departamentos.index');
-    Route::get('/pais/{paisId}', [DepartamentoController::class, 'byPais'])->name('departamentos.by-pais');
-});
-
-Route::prefix('municipios')->group(function () {
-    Route::get('/departamento/{departamentoId}', [MunicipioController::class, 'byDepartamento'])->name('municipios.by-departamento');
+// Rutas de catálogos
+Route::prefix('catalogos')->group(function () {
+    Route::get('/temas', [CatalogoController::class, 'temas'])->name('catalogos.temas');
+    Route::get('/tema/{temaName}', [CatalogoController::class, 'parametrosPorTema'])->name('catalogos.parametros-por-tema');
+    Route::get('/parametros/{temaName}', [CatalogoController::class, 'parametros'])->name('catalogos.parametros');
 });

@@ -5,12 +5,6 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Password;
 
-/**
- * Register Request
- *
- * Valida los datos para registrar un nuevo usuario.
- * Sigue el principio SRP (Single Responsibility).
- */
 class RegisterRequest extends FormRequest
 {
     /**

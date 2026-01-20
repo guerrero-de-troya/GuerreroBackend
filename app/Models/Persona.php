@@ -11,18 +11,8 @@ class Persona extends Model
 {
     use HasFactory;
 
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
     protected $table = 'personas';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'primer_nombre',
         'segundo_nombre',
@@ -33,7 +23,7 @@ class Persona extends Model
         'telefono',
         'edad',
         'genero_id',
-        'categoria_id',
+        'nivel_id',
         'camisa',
         'talla_id',
         'eps_id',
@@ -43,11 +33,6 @@ class Persona extends Model
         'is_system',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
@@ -63,9 +48,6 @@ class Persona extends Model
         'numero_documento',
     ];
 
-    /**
-     * Boot del modelo
-     */
     protected static function boot(): void
     {
         parent::boot();
@@ -79,91 +61,46 @@ class Persona extends Model
         });
     }
 
-    /**
-     * Obtener el tipo de documento relacionado
-     *
-     * @return BelongsTo<ParametroTema, Persona>
-     */
     public function tipoDocumento(): BelongsTo
     {
-        return $this->belongsTo(ParametroTema::class, 'tipo_documento_id');
+        return $this->belongsTo(Parametro::class, 'tipo_documento_id');
     }
 
-    /**
-     * Obtener el género relacionado
-     *
-     * @return BelongsTo<ParametroTema, Persona>
-     */
     public function genero(): BelongsTo
     {
-        return $this->belongsTo(ParametroTema::class, 'genero_id');
+        return $this->belongsTo(Parametro::class, 'genero_id');
     }
 
-    /**
-     * Obtener la categoría relacionada
-     *
-     * @return BelongsTo<ParametroTema, Persona>
-     */
-    public function categoria(): BelongsTo
+    public function nivel(): BelongsTo
     {
-        return $this->belongsTo(ParametroTema::class, 'categoria_id');
+        return $this->belongsTo(Parametro::class, 'nivel_id');
     }
 
-    /**
-     * Obtener la talla relacionada
-     *
-     * @return BelongsTo<ParametroTema, Persona>
-     */
     public function talla(): BelongsTo
     {
-        return $this->belongsTo(ParametroTema::class, 'talla_id');
+        return $this->belongsTo(Parametro::class, 'talla_id');
     }
 
-    /**
-     * Obtener la EPS relacionada
-     *
-     * @return BelongsTo<ParametroTema, Persona>
-     */
     public function eps(): BelongsTo
     {
-        return $this->belongsTo(ParametroTema::class, 'eps_id');
+        return $this->belongsTo(Parametro::class, 'eps_id');
     }
 
-    /**
-     * Obtener el país relacionado
-     *
-     * @return BelongsTo<Pais, Persona>
-     */
     public function pais(): BelongsTo
     {
         return $this->belongsTo(Pais::class, 'pais_id');
     }
 
-    /**
-     * Obtener el departamento relacionado
-     *
-     * @return BelongsTo<Departamento, Persona>
-     */
     public function departamento(): BelongsTo
     {
         return $this->belongsTo(Departamento::class, 'departamento_id');
     }
 
-    /**
-     * Obtener el municipio relacionado
-     *
-     * @return BelongsTo<Municipio, Persona>
-     */
     public function municipio(): BelongsTo
     {
         return $this->belongsTo(Municipio::class, 'municipio_id');
     }
 
-    /**
-     * Obtener el usuario relacionado
-     *
-     * @return HasOne<User>
-     */
     public function user(): HasOne
     {
         return $this->hasOne(User::class, 'persona_id');

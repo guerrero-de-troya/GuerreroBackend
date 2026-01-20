@@ -9,11 +9,6 @@ use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Hash;
 
-/**
- * Auth Service
- *
- * Contiene la lógica de negocio para autenticación.
- */
 class AuthService
 {
     public function __construct(
@@ -21,30 +16,21 @@ class AuthService
         private readonly PersonaRepositoryInterface $personaRepository
     ) {}
 
-    /**
-     * Registrar un nuevo usuario
-     *
-     * @param  array<string, mixed>  $data
-     * @return array{user: User, token: string}
-     */
     public function register(array $data): array
     {
-        // Obtener persona base del sistema
         $systemPersona = $this->personaRepository->getSystemPersona();
 
-        // Crear usuario con persona_id apuntando a la persona base del sistema
         $user = $this->userRepository->create([
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'persona_id' => $systemPersona->id,
         ]);
 
-        // Recargar usuario con persona_id
         $user = $user->fresh();
 
         event(new Registered($user));
 
-        $token = $this->userRepository->createToken($user);
+        $token = $this->createToken($user);
 
         return [
             'user' => $user,
@@ -52,13 +38,6 @@ class AuthService
         ];
     }
 
-    /**
-     * Autenticar usuario y generar token
-     *
-     * @return array{user: User, token: string}
-     *
-     * @throws AuthenticationException
-     */
     public function login(string $email, string $password): array
     {
         $email = strtoupper($email);
@@ -69,7 +48,7 @@ class AuthService
             throw new AuthenticationException('Credenciales inválidas.');
         }
 
-        $token = $this->userRepository->createToken($user);
+        $token = $this->createToken($user);
 
         return [
             'user' => $user,
@@ -77,29 +56,14 @@ class AuthService
         ];
     }
 
-    /**
-     * Revocar el token actual del usuario
-     */
-    public function logout(int $userId): void
-    {
-        $user = $this->userRepository->findOrFail($userId);
-        $this->userRepository->revokeCurrentToken($user);
-    }
-
-    /**
-     * Revocar todos los tokens del usuario
-     */
     public function logoutAll(int $userId): void
     {
         $user = $this->userRepository->findOrFail($userId);
-        $this->userRepository->revokeAllTokens($user);
+        $user->tokens()->delete();
     }
 
-    /**
-     * Obtener usuario por ID
-     */
-    public function getAuthenticatedUser(int $userId): User
+    public function createToken(User $user, string $tokenName = 'auth-token'): string
     {
-        return $this->userRepository->findOrFail($userId);
+        return $user->createToken($tokenName)->plainTextToken;
     }
 }
