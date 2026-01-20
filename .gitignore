@@ -26,3 +26,6 @@ Thumbs.db
 .cursorrules
 .cursor/rules
 boost.json
+.cursor/rules/laravel-boost.mdc
+bootstrap/cache/*
+!bootstrap/cache/.gitignore
