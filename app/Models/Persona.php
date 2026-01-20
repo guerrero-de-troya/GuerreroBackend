@@ -28,16 +28,17 @@ class Persona extends Model
         'segundo_nombre',
         'primer_apellido',
         'segundo_apellido',
-        'id_tipo_documento',
+        'tipo_documento_id',
         'numero_documento',
         'telefono',
         'edad',
-        'id_genero',
-        'id_categoria',
+        'genero_id',
+        'categoria_id',
         'camisa',
-        'id_talla',
-        'id_ciudad_origen',
-        'id_eps',
+        'talla_id',
+        'ciudad_origen_id',
+        'eps_id',
+        'pais_id',
         'departamento_id',
         'municipio_id',
         'is_system',
@@ -61,8 +62,6 @@ class Persona extends Model
         'primer_apellido',
         'segundo_apellido',
         'numero_documento',
-        'telefono',
-        'camisa',
     ];
 
     /**
@@ -88,7 +87,7 @@ class Persona extends Model
      */
     public function tipoDocumento(): BelongsTo
     {
-        return $this->belongsTo(ParametroTema::class, 'id_tipo_documento');
+        return $this->belongsTo(ParametroTema::class, 'tipo_documento_id');
     }
 
     /**
@@ -98,7 +97,7 @@ class Persona extends Model
      */
     public function genero(): BelongsTo
     {
-        return $this->belongsTo(ParametroTema::class, 'id_genero');
+        return $this->belongsTo(ParametroTema::class, 'genero_id');
     }
 
     /**
@@ -108,7 +107,7 @@ class Persona extends Model
      */
     public function categoria(): BelongsTo
     {
-        return $this->belongsTo(ParametroTema::class, 'id_categoria');
+        return $this->belongsTo(ParametroTema::class, 'categoria_id');
     }
 
     /**
@@ -118,7 +117,7 @@ class Persona extends Model
      */
     public function talla(): BelongsTo
     {
-        return $this->belongsTo(ParametroTema::class, 'id_talla');
+        return $this->belongsTo(ParametroTema::class, 'talla_id');
     }
 
     /**
@@ -128,7 +127,7 @@ class Persona extends Model
      */
     public function ciudadOrigen(): BelongsTo
     {
-        return $this->belongsTo(ParametroTema::class, 'id_ciudad_origen');
+        return $this->belongsTo(ParametroTema::class, 'ciudad_origen_id');
     }
 
     /**
@@ -138,7 +137,17 @@ class Persona extends Model
      */
     public function eps(): BelongsTo
     {
-        return $this->belongsTo(ParametroTema::class, 'id_eps');
+        return $this->belongsTo(ParametroTema::class, 'eps_id');
+    }
+
+    /**
+     * Obtener el país relacionado
+     *
+     * @return BelongsTo<Pais, Persona>
+     */
+    public function pais(): BelongsTo
+    {
+        return $this->belongsTo(Pais::class, 'pais_id');
     }
 
     /**

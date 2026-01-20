@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('personas', function (Blueprint $table) {
-            $table->foreignId('id_eps')->nullable()->after('id_ciudad_origen')->constrained('parametros_temas')->onDelete('restrict');
+            $table->foreignId('eps_id')->nullable()->after('ciudad_origen_id')->constrained('parametros_temas')->onDelete('restrict');
         });
 
         Schema::table('personas', function (Blueprint $table) {
@@ -26,12 +26,12 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('personas', function (Blueprint $table) {
-            $table->string('eps')->nullable()->after('id_ciudad_origen');
+            $table->string('eps')->nullable()->after('ciudad_origen_id');
         });
 
         Schema::table('personas', function (Blueprint $table) {
-            $table->dropForeign(['id_eps']);
-            $table->dropColumn('id_eps');
+            $table->dropForeign(['eps_id']);
+            $table->dropColumn('eps_id');
         });
     }
 };

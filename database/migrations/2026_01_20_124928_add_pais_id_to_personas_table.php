@@ -12,8 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('personas', function (Blueprint $table) {
-            $table->foreignId('departamento_id')->nullable()->after('pais_id')->constrained('departamentos')->onDelete('restrict');
-            $table->foreignId('municipio_id')->nullable()->after('departamento_id')->constrained('municipios')->onDelete('restrict');
+            $table->foreignId('pais_id')->nullable()->after('eps_id')->constrained('paises')->onDelete('restrict');
         });
     }
 
@@ -23,9 +22,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('personas', function (Blueprint $table) {
-            $table->dropForeign(['departamento_id']);
-            $table->dropForeign(['municipio_id']);
-            $table->dropColumn(['departamento_id', 'municipio_id']);
+            $table->dropForeign(['pais_id']);
+            $table->dropColumn('pais_id');
         });
     }
 };
