@@ -36,7 +36,6 @@ class Persona extends Model
         'categoria_id',
         'camisa',
         'talla_id',
-        'ciudad_origen_id',
         'eps_id',
         'pais_id',
         'departamento_id',
@@ -118,16 +117,6 @@ class Persona extends Model
     public function talla(): BelongsTo
     {
         return $this->belongsTo(ParametroTema::class, 'talla_id');
-    }
-
-    /**
-     * Obtener la ciudad de origen relacionada
-     *
-     * @return BelongsTo<ParametroTema, Persona>
-     */
-    public function ciudadOrigen(): BelongsTo
-    {
-        return $this->belongsTo(ParametroTema::class, 'ciudad_origen_id');
     }
 
     /**

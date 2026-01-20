@@ -12,6 +12,7 @@ class PersonaBaseSeeder extends Seeder
     use WithoutModelEvents;
 
     private const SYSTEM_PERSONA_NAME = 'BASE';
+
     /**
      * Run the database seeds.
      */
@@ -33,7 +34,6 @@ class PersonaBaseSeeder extends Seeder
         $tipoDocumentoTemp = $parametroTemaRepository->findByNames('TIPO DOCUMENTO', 'TEMP');
         $generoTemp = $parametroTemaRepository->findByNames('GENERO', 'TEMP');
         $categoriaTemp = $parametroTemaRepository->findByNames('CATEGORIA', 'TEMP');
-        $ciudadTemp = $parametroTemaRepository->findByNames('CIUDAD', 'TEMP');
         $epsTemp = $parametroTemaRepository->findByNames('EPS', 'TEMP');
 
         // Crear persona base del sistema
@@ -46,7 +46,6 @@ class PersonaBaseSeeder extends Seeder
             'edad' => 0,
             'genero_id' => $generoTemp->id,
             'categoria_id' => $categoriaTemp->id,
-            'ciudad_origen_id' => $ciudadTemp->id,
             'eps_id' => $epsTemp->id,
             'pais_id' => null,
             'departamento_id' => null,

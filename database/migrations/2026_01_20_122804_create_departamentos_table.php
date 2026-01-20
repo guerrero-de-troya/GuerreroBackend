@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('departamentos', function (Blueprint $table) {
-            $table->id();
-            $table->string('departamento')->unique();
-            $table->foreignId('pais_id')->constrained('paises')->onDelete('restrict');
-            $table->timestamps();
-        });
+        if (! Schema::hasTable('departamentos')) {
+            Schema::create('departamentos', function (Blueprint $table) {
+                $table->id();
+                $table->string('departamento')->unique();
+                $table->foreignId('pais_id')->constrained('paises')->onDelete('restrict');
+                $table->timestamps();
+            });
+        }
     }
 
     /**
