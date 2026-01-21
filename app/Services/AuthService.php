@@ -18,12 +18,10 @@ class AuthService
 
     public function register(array $data): array
     {
-        $systemPersona = $this->personaRepository->getSystemPersona();
-
         $user = $this->userRepository->create([
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
-            'persona_id' => $systemPersona->id,
+            'persona_id' => null,
         ]);
 
         $user = $user->fresh();

@@ -18,13 +18,6 @@ class PersonaRepository extends BaseRepository implements PersonaRepositoryInter
         return Persona::class;
     }
 
-    public function getSystemPersona(): Persona
-    {
-        return $this->model->newQuery()
-            ->where('is_system', true)
-            ->firstOrFail();
-    }
-
     public function findOrFailWithRelations(int|string $id, array $relations = []): Persona
     {
         $query = $this->model->newQuery();

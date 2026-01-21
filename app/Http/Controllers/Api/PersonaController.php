@@ -60,9 +60,8 @@ class PersonaController extends BaseController
     public function profile(): JsonResponse
     {
         $user = Auth::user();
-        $user->load('persona');
 
-        if (! $user->hasProfile()) {
+        if ($user->persona_id === null || ! $user->hasProfile()) {
             return $this->success(
                 [
                     'has_profile' => false,
@@ -71,6 +70,8 @@ class PersonaController extends BaseController
                 'El usuario no tiene un perfil creado'
             );
         }
+
+        $user->load('persona');
 
         $relations = ['tipoDocumento', 'genero', 'nivel', 'talla', 'eps'];
         $persona = $this->personaService->getPersonaById($user->persona_id, $relations);

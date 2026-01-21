@@ -30,14 +30,11 @@ class Persona extends Model
         'pais_id',
         'departamento_id',
         'municipio_id',
-        'is_system',
     ];
 
     protected function casts(): array
     {
-        return [
-            'is_system' => 'boolean',
-        ];
+        return [];
     }
 
     protected $uppercase = [

@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface PersonaRepositoryInterface extends RepositoryInterface
 {
-    public function getSystemPersona(): Persona;
-
     public function findOrFailWithRelations(int|string $id, array $relations = []): Persona;
 
     public function allWithRelations(array $relations = []): Collection;

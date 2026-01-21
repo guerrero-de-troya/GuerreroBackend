@@ -58,8 +58,12 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function hasProfile(): bool
     {
+        if ($this->persona_id === null) {
+            return false;
+        }
+
         $this->loadMissing('persona');
 
-        return ! $this->persona->is_system;
+        return $this->persona !== null;
     }
 }
