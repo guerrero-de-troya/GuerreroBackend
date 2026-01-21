@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\User;
-use App\Repositories\Contracts\PersonaRepositoryInterface;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\Events\Registered;
@@ -12,8 +11,7 @@ use Illuminate\Support\Facades\Hash;
 class AuthService
 {
     public function __construct(
-        private readonly UserRepositoryInterface $userRepository,
-        private readonly PersonaRepositoryInterface $personaRepository
+        private readonly UserRepositoryInterface $userRepository
     ) {}
 
     public function register(array $data): array

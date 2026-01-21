@@ -29,8 +29,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(CatalogoService::class);
         $this->app->singleton(AuthService::class, function ($app) {
             return new AuthService(
-                $app->make(UserRepositoryInterface::class),
-                $app->make(PersonaRepositoryInterface::class)
+                $app->make(UserRepositoryInterface::class)
             );
         });
 
