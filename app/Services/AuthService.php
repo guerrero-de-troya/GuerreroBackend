@@ -7,6 +7,7 @@ use App\Repositories\Contracts\UserRepositoryInterface;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthService
 {
@@ -50,6 +51,14 @@ class AuthService
             'user' => $user,
             'token' => $token,
         ];
+    }
+
+    public function logout(User $user): void
+    {
+        $token = $user->currentAccessToken();
+        if ($token instanceof PersonalAccessToken) {
+            $token->delete();
+        }
     }
 
     public function logoutAll(int $userId): void

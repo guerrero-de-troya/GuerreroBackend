@@ -1,16 +1,20 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\V1;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\ResetPasswordRequest;
+use App\Traits\ApiResponse;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 
-class PasswordResetController extends BaseController
+class PasswordResetController extends Controller
 {
+    use ApiResponse;
+
     public function __construct(
         private readonly UserRepositoryInterface $userRepository
     ) {}

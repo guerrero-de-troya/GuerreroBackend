@@ -30,6 +30,17 @@ class PersonaService
         return $this->personaRepository->findOrFailWithRelations($id, $relations);
     }
 
+    public function createPersona(array $data, array $relations = []): Persona
+    {
+        $persona = $this->personaRepository->create($data);
+
+        if (! empty($relations)) {
+            $persona->load($relations);
+        }
+
+        return $persona;
+    }
+
     public function updatePersona(int $id, array $data, array $relations = []): Persona
     {
         $persona = $this->personaRepository->update($id, $data);

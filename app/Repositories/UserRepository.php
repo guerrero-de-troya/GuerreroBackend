@@ -4,10 +4,17 @@ namespace App\Repositories;
 
 use App\Models\User;
 use App\Repositories\Contracts\UserRepositoryInterface;
+use App\Repositories\Traits\BaseRepositoryTrait;
 
-
-class UserRepository extends BaseRepository implements UserRepositoryInterface
+class UserRepository implements UserRepositoryInterface
 {
+    use BaseRepositoryTrait;
+
+    public function __construct()
+    {
+        $this->initializeRepository();
+    }
+
     protected function model(): string
     {
         return User::class;

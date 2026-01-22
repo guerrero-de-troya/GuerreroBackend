@@ -1,14 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\V1;
 
+use App\Http\Controllers\Controller;
+use App\Traits\ApiResponse;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class EmailVerificationController extends BaseController
+class EmailVerificationController extends Controller
 {
+    use ApiResponse;
+
     public function send(Request $request): JsonResponse
     {
         if ($request->user()->hasVerifiedEmail()) {

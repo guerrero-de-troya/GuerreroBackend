@@ -4,13 +4,16 @@ namespace App\Repositories;
 
 use App\Models\Persona;
 use App\Repositories\Contracts\PersonaRepositoryInterface;
+use App\Repositories\Traits\BaseRepositoryTrait;
 use Illuminate\Database\Eloquent\Collection;
 
-class PersonaRepository extends BaseRepository implements PersonaRepositoryInterface
+class PersonaRepository implements PersonaRepositoryInterface
 {
+    use BaseRepositoryTrait;
+
     public function __construct()
     {
-        parent::__construct();
+        $this->initializeRepository();
     }
 
     protected function model(): string

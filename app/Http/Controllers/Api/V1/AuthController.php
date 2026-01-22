@@ -1,18 +1,21 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\V1;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Resources\UserResource;
+use App\Traits\ApiResponse;
 use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Laravel\Sanctum\PersonalAccessToken;
+use Illuminate\Http\Response;
 
-class AuthController extends BaseController
+class AuthController extends Controller
 {
+    use ApiResponse;
+
     public function __construct(
         private readonly AuthService $authService
     ) {}
@@ -46,39 +49,24 @@ class AuthController extends BaseController
         );
     }
 
-    public function logout(Request $request): JsonResponse
+    public function logout(Request $request): Response
     {
-        $token = $request->user()?->currentAccessToken();
-        if ($token instanceof PersonalAccessToken) {
-            $token->delete();
-        }
+        $this->authService->logout($request->user());
 
-        return $this->success(null, 'Sesión cerrada exitosamente');
+        return $this->noContent();
     }
 
-    public function logoutAll(Request $request): JsonResponse
+    public function logoutAll(Request $request): Response
     {
-        $userId = $request->user()?->id;
+        $this->authService->logoutAll($request->user()->id);
 
-        if ($userId === null) {
-            return $this->error('Usuario no autenticado', 401);
-        }
-
-        $this->authService->logoutAll($userId);
-
-        return $this->success(null, 'Sesión cerrada en todos los dispositivos');
+        return $this->noContent();
     }
 
-    public function me(): JsonResponse
+    public function me(Request $request): JsonResponse
     {
-        $user = Auth::user();
-
-        if ($user === null) {
-            return $this->error('Usuario no autenticado', 401);
-        }
-
         return $this->success(
-            new UserResource($user),
+            new UserResource($request->user()),
             'Usuario obtenido exitosamente'
         );
     }

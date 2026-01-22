@@ -1,16 +1,15 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Repositories\Traits;
 
-use App\Repositories\Contracts\RepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
-abstract class BaseRepository implements RepositoryInterface
+trait BaseRepositoryTrait
 {
     protected Model $model;
 
-    public function __construct()
+    protected function initializeRepository(): void
     {
         $this->model = $this->makeModel();
     }

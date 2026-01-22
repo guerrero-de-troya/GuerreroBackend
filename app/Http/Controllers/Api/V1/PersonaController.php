@@ -1,15 +1,21 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\V1;
 
+use App\Http\Controllers\Controller;
+use App\Http\Requests\StorePersonaRequest;
 use App\Http\Requests\UpdatePersonaRequest;
 use App\Http\Resources\PersonaResource;
+use App\Traits\ApiResponse;
 use App\Services\PersonaService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
-class PersonaController extends BaseController
+class PersonaController extends Controller
 {
+    use ApiResponse;
+
     public function __construct(
         private readonly PersonaService $personaService
     ) {}
@@ -36,6 +42,17 @@ class PersonaController extends BaseController
         );
     }
 
+    public function store(StorePersonaRequest $request): JsonResponse
+    {
+        $relations = ['tipoDocumento', 'genero', 'nivel', 'talla', 'eps'];
+        $persona = $this->personaService->createPersona($request->validated(), $relations);
+
+        return $this->created(
+            new PersonaResource($persona),
+            'Persona creada exitosamente'
+        );
+    }
+
     public function update(UpdatePersonaRequest $request, int $id): JsonResponse
     {
         $relations = ['tipoDocumento', 'genero', 'nivel', 'talla', 'eps'];
@@ -47,14 +64,11 @@ class PersonaController extends BaseController
         );
     }
 
-    public function destroy(int $id): JsonResponse
+    public function destroy(int $id): Response
     {
         $this->personaService->deletePersona($id);
 
-        return $this->success(
-            null,
-            'Persona eliminada exitosamente'
-        );
+        return $this->noContent();
     }
 
     public function profile(): JsonResponse

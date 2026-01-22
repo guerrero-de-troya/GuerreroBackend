@@ -1,12 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\V1;
 
+use App\Http\Controllers\Controller;
+use App\Traits\ApiResponse;
 use App\Services\UbicacionService;
 use Illuminate\Http\JsonResponse;
 
-class UbicacionController extends BaseController
+class UbicacionController extends Controller
 {
+    use ApiResponse;
+
     public function __construct(
         private readonly UbicacionService $ubicacionService
     ) {}
