@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Api\V1;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -27,15 +27,15 @@ class PersonaResource extends JsonResource
             'pais_id' => $this->pais_id,
             'departamento_id' => $this->departamento_id,
             'municipio_id' => $this->municipio_id,
-            'tipo_documento' => $this->whenLoaded('tipoDocumento'),
-            'genero' => $this->whenLoaded('genero'),
-            'nivel' => $this->whenLoaded('nivel'),
-            'talla' => $this->whenLoaded('talla'),
-            'eps' => $this->whenLoaded('eps'),
-            'pais' => $this->whenLoaded('pais'),
-            'departamento' => $this->whenLoaded('departamento'),
-            'municipio' => $this->whenLoaded('municipio'),
-            'user' => $this->whenLoaded('user'),
+            'tipo_documento' => ParametroResource::make($this->whenLoaded('tipoDocumento')),
+            'genero' => ParametroResource::make($this->whenLoaded('genero')),
+            'nivel' => ParametroResource::make($this->whenLoaded('nivel')),
+            'talla' => ParametroResource::make($this->whenLoaded('talla')),
+            'eps' => ParametroResource::make($this->whenLoaded('eps')),
+            'pais' => PaisResource::make($this->whenLoaded('pais')),
+            'departamento' => DepartamentoResource::make($this->whenLoaded('departamento')),
+            'municipio' => MunicipioResource::make($this->whenLoaded('municipio')),
+            'user' => UserResource::make($this->whenLoaded('user')),
             'created_at' => $this->created_at->toISOString(),
             'updated_at' => $this->updated_at->toISOString(),
         ];
