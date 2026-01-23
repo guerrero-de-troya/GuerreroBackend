@@ -1,16 +1,12 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Http\Requests;
 
 use App\Data\Auth\ResetPasswordData;
-use App\Http\Requests\Traits\NormalizesEmail;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ResetPasswordRequest extends FormRequest
 {
-    use NormalizesEmail;
 
     public function authorize(): bool
     {

@@ -22,23 +22,6 @@ class User extends Authenticatable implements MustVerifyEmail
         'persona_id',
     ];
 
-    protected $uppercase = [
-        'email',
-    ];
-
-    protected static function boot(): void
-    {
-        parent::boot();
-
-        static::saving(function ($model) {
-            foreach ($model->uppercase as $field) {
-                if (isset($model->attributes[$field]) && is_string($model->attributes[$field])) {
-                    $model->attributes[$field] = strtoupper($model->attributes[$field]);
-                }
-            }
-        });
-    }
-
     protected $hidden = [
         'password',
         'remember_token',
@@ -50,6 +33,11 @@ class User extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function setEmailAttribute(string $value): void
+    {
+        $this->attributes['email'] = strtolower($value);
     }
 
     public function sendEmailVerificationNotification(): void

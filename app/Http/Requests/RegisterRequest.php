@@ -3,12 +3,10 @@
 namespace App\Http\Requests;
 
 use App\Data\Auth\RegisterData;
-use App\Http\Requests\Traits\NormalizesEmail;
 use Illuminate\Foundation\Http\FormRequest;
 
 class RegisterRequest extends FormRequest
 {
-    use NormalizesEmail;
 
     public function authorize(): bool
     {

@@ -17,7 +17,7 @@ class ForgotPasswordAction
      */
     public function execute(ForgotPasswordData $data): array
     {
-        $email = strtoupper($data->email);
+        $email = strtolower($data->email);
 
         if (! $this->userRepository->existsByEmail($email)) {
             return [

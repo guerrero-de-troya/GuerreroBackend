@@ -17,7 +17,7 @@ class RegisterAction
     public function execute(RegisterData $data): array
     {
         $user = $this->userRepository->create([
-            'email' => $data->email,
+            'email' => strtolower($data->email),
             'password' => Hash::make($data->password),
             'persona_id' => null,
         ]);

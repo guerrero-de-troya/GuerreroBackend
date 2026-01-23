@@ -15,7 +15,7 @@ class LoginAction
 
     public function execute(LoginData $data): array
     {
-        $email = strtoupper($data->email);
+        $email = strtolower($data->email);
 
         $user = $this->userRepository->findByEmail($email);
 
