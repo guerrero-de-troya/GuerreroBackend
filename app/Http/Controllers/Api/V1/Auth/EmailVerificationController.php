@@ -34,6 +34,6 @@ class EmailVerificationController extends Controller
 
         return $result['success']
             ? $this->success(null, $result['message'])
-            : $this->error($result['message'], $result['statusCode']);
+            : $this->error($result['message'], 400);
     }
 }

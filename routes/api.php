@@ -23,8 +23,9 @@ Route::prefix('v1')->group(function () {
     });
 
     // Rutas de verificación de email
-    Route::middleware('auth:sanctum')->prefix('email')->group(function () {
+    Route::prefix('email')->group(function () {
         Route::post('/verification-notification', [EmailVerificationController::class, 'send'])
+            ->middleware('auth:sanctum')
             ->name('api.v1.verification.send');
         Route::get('/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
             ->middleware('signed')
