@@ -6,6 +6,7 @@ use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Notifications\Messages\MailMessage;
 
 class VerifyEmailNotification extends VerifyEmail
 {
@@ -19,5 +20,18 @@ class VerifyEmailNotification extends VerifyEmail
                 'hash' => sha1($notifiable->getEmailForVerification()),
             ]
         );
+    }
+
+    public function toMail($notifiable): MailMessage
+    {
+        $verificationUrl = $this->verificationUrl($notifiable);
+        $expirationTime = Config::get('auth.verification.expire', 60);
+
+        return (new MailMessage)
+            ->subject('Verifica tu correo electrónico - Guerrero de Troya')
+            ->view('emails.verify-email', [
+                'verificationUrl' => $verificationUrl,
+                'expirationTime' => $expirationTime,
+            ]);
     }
 }

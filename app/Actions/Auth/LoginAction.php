@@ -5,7 +5,6 @@ namespace App\Actions\Auth;
 use App\Data\Auth\LoginData;
 use App\Data\User\UserData;
 use App\Repositories\Contracts\UserRepositoryInterface;
-use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\Hash;
 
 class LoginAction
@@ -21,14 +20,31 @@ class LoginAction
         $user = $this->userRepository->findByEmail($email);
 
         if (! $user || ! Hash::check($data->password, $user->password)) {
-            throw new AuthenticationException('Credenciales inválidas.');
+            return [
+                'success' => false,
+                'message' => 'Credenciales inválidas.',
+                'statusCode' => 401,
+            ];
+        }
+
+        if (! $user->hasVerifiedEmail()) {
+            return [
+                'success' => false,
+                'message' => 'Email no verificado. Por favor verifica tu email.',
+                'statusCode' => 403,
+            ];
         }
 
         $token = $user->createToken('auth-token')->plainTextToken;
 
         return [
-            'user' => UserData::from($user),
-            'token' => $token,
+            'success' => true,
+            'message' => 'Sesión iniciada exitosamente',
+            'data' => [
+                'user' => UserData::from($user),
+                'token' => $token,
+            ],
+            'statusCode' => 200,
         ];
     }
 }

@@ -13,7 +13,7 @@ class ForgotPasswordAction
     ) {}
 
     /**
-     * @return array{message: string, isError: bool, statusCode: int}
+     * @return array{success: bool, message: string, statusCode: int}
      */
     public function execute(ForgotPasswordData $data): array
     {
@@ -21,8 +21,8 @@ class ForgotPasswordAction
 
         if (! $this->userRepository->existsByEmail($email)) {
             return [
+                'success' => true,
                 'message' => 'Si el email existe, se enviará un enlace para restablecer la contraseña.',
-                'isError' => false,
                 'statusCode' => 200,
             ];
         }
@@ -31,15 +31,15 @@ class ForgotPasswordAction
 
         if ($status === Password::RESET_LINK_SENT) {
             return [
+                'success' => true,
                 'message' => 'Se ha enviado un enlace para restablecer la contraseña a tu email.',
-                'isError' => false,
                 'statusCode' => 200,
             ];
         }
 
         return [
+            'success' => false,
             'message' => 'Error al enviar el enlace de restablecimiento.',
-            'isError' => true,
             'statusCode' => 500,
         ];
     }

@@ -17,8 +17,8 @@ class GetMyProfileAction
     {
         if ($user->persona_id === null || ! $user->hasProfile()) {
             return new ProfileData(
-                hasProfile: false,
-                profile: null
+                hasPersona: false,
+                persona: null
             );
         }
 
@@ -28,8 +28,8 @@ class GetMyProfileAction
         );
 
         return new ProfileData(
-            hasProfile: true,
-            profile: PersonaData::from($persona)
+            hasPersona: true,
+            persona: PersonaData::from($persona)
         );
     }
 }

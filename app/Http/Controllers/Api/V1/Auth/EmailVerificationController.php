@@ -22,9 +22,7 @@ class EmailVerificationController extends Controller
     {
         $result = $this->sendEmailVerificationAction->execute($request->user());
 
-        return $result['success']
-            ? $this->success(null, $result['message'])
-            : $this->error($result['message'], 400);
+        return $this->respond($result['success'], $result);
     }
 
     public function verify(Request $request): JsonResponse
@@ -32,8 +30,6 @@ class EmailVerificationController extends Controller
         $userId = (int) $request->route('id');
         $result = $this->verifyEmailAction->execute($userId);
 
-        return $result['success']
-            ? $this->success(null, $result['message'])
-            : $this->error($result['message'], 400);
+        return $this->respond($result['success'], $result);
     }
 }

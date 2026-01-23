@@ -10,8 +10,8 @@ class SendEmailVerificationAction
     {
         if ($user->hasVerifiedEmail()) {
             return [
-                'message' => 'El email ya ha sido verificado.',
                 'success' => false,
+                'message' => 'El email ya ha sido verificado.',
                 'statusCode' => 400,
             ];
         }
@@ -19,8 +19,8 @@ class SendEmailVerificationAction
         $user->sendEmailVerificationNotification();
 
         return [
-            'message' => 'Email de verificación enviado exitosamente.',
             'success' => true,
+            'message' => 'Email de verificación enviado exitosamente.',
             'statusCode' => 200,
         ];
     }

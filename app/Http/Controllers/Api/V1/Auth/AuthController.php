@@ -30,20 +30,14 @@ class AuthController extends Controller
     {
         $result = $this->registerAction->execute($request->toDto());
 
-        return $this->created(
-            $result,
-            'Usuario registrado exitosamente. Por favor verifica tu email.'
-        );
+        return $this->respond($result['success'], $result);
     }
 
     public function login(LoginRequest $request): JsonResponse
     {
         $result = $this->loginAction->execute($request->toDto());
 
-        return $this->success(
-            $result,
-            'Sesión iniciada exitosamente'
-        );
+        return $this->respond($result['success'], $result);
     }
 
     public function logout(Request $request): Response

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Password;
 class ResetPasswordAction
 {
     /**
-     * @return array{success: bool, message: string}
+     * @return array{success: bool, message: string, statusCode: int}
      */
     public function execute(ResetPasswordData $data): array
     {
@@ -31,10 +31,12 @@ class ResetPasswordAction
             ? [
                 'success' => true,
                 'message' => 'Contraseña restablecida exitosamente.',
+                'statusCode' => 200,
             ]
             : [
                 'success' => false,
                 'message' => 'El token es inválido o ha expirado.',
+                'statusCode' => 400,
             ];
     }
 }

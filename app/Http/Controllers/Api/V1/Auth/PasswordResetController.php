@@ -23,17 +23,13 @@ class PasswordResetController extends Controller
     {
         $result = $this->forgotPasswordAction->execute($request->toDto());
 
-        return $result['success']
-            ? $this->success(null, $result['message'])
-            : $this->error($result['message'], 400);
+        return $this->respond($result['success'], $result);
     }
 
     public function reset(ResetPasswordRequest $request): JsonResponse
     {
         $result = $this->resetPasswordAction->execute($request->toDto());
 
-        return $result['success']
-            ? $this->success(null, $result['message'])
-            : $this->error($result['message'], 400);
+        return $this->respond($result['success'], $result);
     }
 }

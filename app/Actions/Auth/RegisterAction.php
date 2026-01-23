@@ -29,8 +29,13 @@ class RegisterAction
         $token = $user->createToken('auth-token')->plainTextToken;
 
         return [
-            'user' => UserData::from($user),
-            'token' => $token,
+            'success' => true,
+            'message' => 'Usuario registrado exitosamente. Por favor verifica tu email.',
+            'data' => [
+                'user' => UserData::from($user),
+                'token' => $token,
+            ],
+            'statusCode' => 201,
         ];
     }
 }

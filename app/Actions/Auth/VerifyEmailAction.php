@@ -17,16 +17,16 @@ class VerifyEmailAction
 
         if (! $user) {
             return [
-                'message' => 'Usuario no encontrado.',
                 'success' => false,
+                'message' => 'Usuario no encontrado.',
                 'statusCode' => 404,
             ];
         }
 
         if ($user->hasVerifiedEmail()) {
             return [
-                'message' => 'El email ya fue verificado.',
                 'success' => false,
+                'message' => 'El email ya fue verificado.',
                 'statusCode' => 400,
             ];
         }
@@ -35,8 +35,8 @@ class VerifyEmailAction
         event(new Verified($user));
 
         return [
-            'message' => 'Email verificado exitosamente.',
             'success' => true,
+            'message' => 'Email verificado exitosamente.',
             'statusCode' => 200,
         ];
     }
