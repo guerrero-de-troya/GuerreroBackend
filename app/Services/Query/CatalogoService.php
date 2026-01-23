@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Query;
 
 use App\Exceptions\TemaNotFoundException;
 use App\Models\Parametro;
 use App\Models\Tema;
 use Illuminate\Database\Eloquent\Collection;
 
-class CatalogoService
+class CatalogoQueryService
 {
     public function getAllTemas(): Collection
     {

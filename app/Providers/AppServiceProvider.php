@@ -2,6 +2,12 @@
 
 namespace App\Providers;
 
+use App\Actions\Auth\ForgotPasswordAction;
+use App\Actions\Auth\LoginAction;
+use App\Actions\Auth\LogoutAction;
+use App\Actions\Auth\LogoutAllAction;
+use App\Actions\Auth\RegisterAction;
+use App\Actions\Auth\ResetPasswordAction;
 use App\Actions\Persona\CreatePersonaAction;
 use App\Actions\Persona\DeletePersonaAction;
 use App\Actions\Persona\GetMyProfileAction;
@@ -10,7 +16,6 @@ use App\Repositories\Contracts\PersonaRepositoryInterface;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use App\Repositories\PersonaRepository;
 use App\Repositories\UserRepository;
-use App\Services\AuthService;
 use App\Services\CatalogoService;
 use App\Services\Query\PersonaQueryService;
 use App\Services\UbicacionService;
@@ -31,21 +36,42 @@ class AppServiceProvider extends ServiceProvider
 
         // Bindings de Services
         $this->app->singleton(CatalogoService::class);
-        $this->app->singleton(AuthService::class, function ($app) {
-            return new AuthService(
-                $app->make(UserRepositoryInterface::class)
-            );
-        });
-
         $this->app->singleton(PersonaQueryService::class, function ($app) {
             return new PersonaQueryService(
                 $app->make(PersonaRepositoryInterface::class)
             );
         });
-
         $this->app->singleton(UbicacionService::class);
 
-        // Bindings de Actions
+        // Bindings de Actions Auth
+        $this->app->singleton(RegisterAction::class, function ($app) {
+            return new RegisterAction(
+                $app->make(UserRepositoryInterface::class)
+            );
+        });
+
+        $this->app->singleton(LoginAction::class, function ($app) {
+            return new LoginAction(
+                $app->make(UserRepositoryInterface::class)
+            );
+        });
+
+        $this->app->singleton(LogoutAction::class);
+        $this->app->singleton(LogoutAllAction::class, function ($app) {
+            return new LogoutAllAction(
+                $app->make(UserRepositoryInterface::class)
+            );
+        });
+
+        $this->app->singleton(ForgotPasswordAction::class, function ($app) {
+            return new ForgotPasswordAction(
+                $app->make(UserRepositoryInterface::class)
+            );
+        });
+
+        $this->app->singleton(ResetPasswordAction::class);
+
+        // Bindings de Actions Persona
         $this->app->singleton(CreatePersonaAction::class, function ($app) {
             return new CreatePersonaAction(
                 $app->make(PersonaRepositoryInterface::class)

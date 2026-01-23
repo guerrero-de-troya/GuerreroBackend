@@ -91,7 +91,7 @@ class PersonaController extends Controller
     {
         $profileData = $this->getMyProfileAction->execute($request->user());
 
-        $message = $profileData->hasProfile
+        $message = $profileData->hasPersona
             ? 'Perfil obtenido exitosamente'
             : 'El usuario no tiene un perfil creado';
 

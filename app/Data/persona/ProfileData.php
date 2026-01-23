@@ -10,7 +10,7 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 class ProfileData extends Data
 {
     public function __construct(
-        public bool $hasProfile,
-        public ?PersonaData $profile
+        public bool $hasPersona,
+        public ?PersonaData $persona
     ) {}
 }

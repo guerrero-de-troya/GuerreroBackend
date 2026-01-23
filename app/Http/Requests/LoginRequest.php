@@ -2,36 +2,21 @@
 
 namespace App\Http\Requests;
 
+use App\Data\Auth\LoginData;
 use Illuminate\Foundation\Http\FormRequest;
 
 class LoginRequest extends FormRequest
 {
-    /**
-     * Determinar si el usuario está autorizado para hacer esta petición
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Obtener las reglas de validación que se aplican a la petición
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
-        return [
-            'email' => ['required', 'string', 'email'],
-            'password' => ['required', 'string'],
-        ];
+        return LoginData::rules();
     }
 
-    /**
-     * Obtener mensajes de error personalizados para las reglas de validación
-     *
-     * @return array<string, string>
-     */
     public function messages(): array
     {
         return [
@@ -39,5 +24,10 @@ class LoginRequest extends FormRequest
             'email.email' => 'El email debe ser una dirección válida.',
             'password.required' => 'La contraseña es obligatoria.',
         ];
+    }
+
+    public function toDto(): LoginData
+    {
+        return LoginData::from($this->validated());
     }
 }

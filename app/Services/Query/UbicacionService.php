@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Query;
 
 use App\Models\Departamento;
 use App\Models\Municipio;
 use App\Models\Pais;
 use Illuminate\Database\Eloquent\Collection;
 
-class UbicacionService
+class UbicacionQueryService
 {
     public function getPaises(): Collection
     {

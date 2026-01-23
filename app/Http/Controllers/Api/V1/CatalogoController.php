@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Traits\ApiResponse;
-use App\Services\CatalogoService;
+use App\Services\Query\CatalogoQueryService;
 use Illuminate\Http\JsonResponse;
 
 class CatalogoController extends Controller
@@ -12,19 +12,19 @@ class CatalogoController extends Controller
     use ApiResponse;
 
     public function __construct(
-        private readonly CatalogoService $catalogoService
+        private readonly CatalogoQueryService $catalogoQueryService
     ) {}
 
     public function temas(): JsonResponse
     {
-        $temas = $this->catalogoService->getAllTemas();
+        $temas = $this->catalogoQueryService->getAllTemas();
 
         return $this->success($temas, 'Temas obtenidos exitosamente');
     }
 
     public function parametrosPorTema(string $temaName): JsonResponse
     {
-        $tema = $this->catalogoService->getTemaByName($temaName);
+        $tema = $this->catalogoQueryService->getTemaByName($temaName);
 
         return $this->success(
             [
@@ -37,7 +37,7 @@ class CatalogoController extends Controller
 
     public function parametros(string $temaName): JsonResponse
     {
-        $parametros = $this->catalogoService->getParametrosByTema($temaName);
+        $parametros = $this->catalogoQueryService->getParametrosByTema($temaName);
 
         return $this->success($parametros, 'Parámetros obtenidos exitosamente');
     }

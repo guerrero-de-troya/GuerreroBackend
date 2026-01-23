@@ -1,0 +1,40 @@
+<?php
+
+namespace App\Actions\Auth;
+
+use App\Data\Auth\ResetPasswordData;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
+
+class ResetPasswordAction
+{
+    /**
+     * @return array{success: bool, message: string}
+     */
+    public function execute(ResetPasswordData $data): array
+    {
+        $status = Password::reset(
+            [
+                'email' => $data->email,
+                'password' => $data->password,
+                'password_confirmation' => $data->passwordConfirmation,
+                'token' => $data->token,
+            ],
+            function ($user, $password) {
+                $user->forceFill([
+                    'password' => Hash::make($password),
+                ])->save();
+            }
+        );
+
+        return $status === Password::PASSWORD_RESET
+            ? [
+                'success' => true,
+                'message' => 'Contraseña restablecida exitosamente.',
+            ]
+            : [
+                'success' => false,
+                'message' => 'El token es inválido o ha expirado.',
+            ];
+    }
+}
