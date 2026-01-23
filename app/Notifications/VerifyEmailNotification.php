@@ -12,7 +12,8 @@ class VerifyEmailNotification extends VerifyEmail
 {
     public function verificationUrl($notifiable): string
     {
-        return URL::temporarySignedRoute(
+        // Generar la URL firmada de la API
+        $apiUrl = URL::temporarySignedRoute(
             'api.v1.verification.verify',
             Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
             [
@@ -20,6 +21,19 @@ class VerifyEmailNotification extends VerifyEmail
                 'hash' => sha1($notifiable->getEmailForVerification()),
             ]
         );
+
+        // Obtener la URL del frontend
+        $frontendUrl = config('app.frontend_url', 'http://localhost:3000');
+        
+        $parsedUrl = parse_url($apiUrl);
+        parse_str($parsedUrl['query'] ?? '', $queryParams);
+        
+        // Construir la URL del frontend con todos los parámetros necesarios
+        return $frontendUrl . '/verify-email/' . $notifiable->getKey() . '/' . sha1($notifiable->getEmailForVerification()) 
+            . '?' . http_build_query([
+                'expires' => $queryParams['expires'] ?? '',
+                'signature' => $queryParams['signature'] ?? '',
+            ]);
     }
 
     public function toMail($notifiable): MailMessage

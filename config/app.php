@@ -65,6 +65,9 @@ return [
     |
     */
 
+    // Frontend URL para la aplicación de clientes
+    'frontend_url' => env('FRONTEND_URL', 'http://localhost:3000'),
+
     'timezone' => 'UTC',
 
     /*
