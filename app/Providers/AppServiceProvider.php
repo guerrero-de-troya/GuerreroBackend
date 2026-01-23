@@ -2,13 +2,17 @@
 
 namespace App\Providers;
 
+use App\Actions\Persona\CreatePersonaAction;
+use App\Actions\Persona\DeletePersonaAction;
+use App\Actions\Persona\GetMyProfileAction;
+use App\Actions\Persona\UpdatePersonaAction;
 use App\Repositories\Contracts\PersonaRepositoryInterface;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use App\Repositories\PersonaRepository;
 use App\Repositories\UserRepository;
 use App\Services\AuthService;
 use App\Services\CatalogoService;
-use App\Services\PersonaService;
+use App\Services\Query\PersonaQueryService;
 use App\Services\UbicacionService;
 use Illuminate\Support\ServiceProvider;
 
@@ -33,13 +37,38 @@ class AppServiceProvider extends ServiceProvider
             );
         });
 
-        $this->app->singleton(PersonaService::class, function ($app) {
-            return new PersonaService(
+        $this->app->singleton(PersonaQueryService::class, function ($app) {
+            return new PersonaQueryService(
                 $app->make(PersonaRepositoryInterface::class)
             );
         });
 
         $this->app->singleton(UbicacionService::class);
+
+        // Bindings de Actions
+        $this->app->singleton(CreatePersonaAction::class, function ($app) {
+            return new CreatePersonaAction(
+                $app->make(PersonaRepositoryInterface::class)
+            );
+        });
+
+        $this->app->singleton(UpdatePersonaAction::class, function ($app) {
+            return new UpdatePersonaAction(
+                $app->make(PersonaRepositoryInterface::class)
+            );
+        });
+
+        $this->app->singleton(DeletePersonaAction::class, function ($app) {
+            return new DeletePersonaAction(
+                $app->make(PersonaRepositoryInterface::class)
+            );
+        });
+
+        $this->app->singleton(GetMyProfileAction::class, function ($app) {
+            return new GetMyProfileAction(
+                $app->make(PersonaQueryService::class)
+            );
+        });
     }
 
     /**

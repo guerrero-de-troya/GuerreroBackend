@@ -2,100 +2,102 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Actions\Persona\CreatePersonaAction;
+use App\Actions\Persona\DeletePersonaAction;
+use App\Actions\Persona\GetMyProfileAction;
+use App\Actions\Persona\UpdatePersonaAction;
+use App\Data\Persona\PersonaData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePersonaRequest;
 use App\Http\Requests\UpdatePersonaRequest;
-use App\Http\Resources\Api\V1\PersonaResource;
+use App\Services\Query\PersonaQueryService;
 use App\Traits\ApiResponse;
-use App\Services\PersonaService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
 
 class PersonaController extends Controller
 {
     use ApiResponse;
 
     public function __construct(
-        private readonly PersonaService $personaService
+        private readonly PersonaQueryService $personaQueryService,
+        private readonly CreatePersonaAction $createPersonaAction,
+        private readonly UpdatePersonaAction $updatePersonaAction,
+        private readonly DeletePersonaAction $deletePersonaAction,
+        private readonly GetMyProfileAction $getMyProfileAction
     ) {}
 
     public function index(): JsonResponse
     {
-        $relations = ['tipoDocumento', 'genero', 'nivel', 'talla', 'eps'];
-        $personas = $this->personaService->getAllPersonas($relations);
+        $personas = $this->personaQueryService->all(
+            $this->personaQueryService->basicRelations()
+        );
 
         return $this->success(
-            PersonaResource::collection($personas),
+            $personas->map(fn ($persona) => PersonaData::from($persona)),
             'Personas obtenidas exitosamente'
         );
     }
 
     public function show(int $id): JsonResponse
     {
-        $relations = ['tipoDocumento', 'genero', 'nivel', 'talla', 'eps', 'user'];
-        $persona = $this->personaService->getPersonaById($id, $relations);
+        $persona = $this->personaQueryService->findById(
+            $id,
+            $this->personaQueryService->fullRelations()
+        );
 
         return $this->success(
-            new PersonaResource($persona),
+            PersonaData::from($persona),
             'Persona obtenida exitosamente'
         );
     }
 
     public function store(StorePersonaRequest $request): JsonResponse
     {
-        $relations = ['tipoDocumento', 'genero', 'nivel', 'talla', 'eps'];
-        $persona = $this->personaService->createPersona($request->validated(), $relations);
+        $persona = $this->createPersonaAction->execute(
+            $request->toDto(),
+            $this->personaQueryService->basicRelations()
+        );
 
         return $this->created(
-            new PersonaResource($persona),
+            PersonaData::from($persona),
             'Persona creada exitosamente'
         );
     }
 
     public function update(UpdatePersonaRequest $request, int $id): JsonResponse
     {
-        $relations = ['tipoDocumento', 'genero', 'nivel', 'talla', 'eps'];
-        $persona = $this->personaService->updatePersona($id, $request->validated(), $relations);
+        $persona = $this->updatePersonaAction->execute(
+            $id,
+            $request->toDto(),
+            $this->personaQueryService->basicRelations()
+        );
 
         return $this->success(
-            new PersonaResource($persona),
+            PersonaData::from($persona),
             'Persona actualizada exitosamente'
         );
     }
 
     public function destroy(int $id): Response
     {
-        $this->personaService->deletePersona($id);
+        $this->deletePersonaAction->execute($id);
 
         return $this->noContent();
     }
 
-    public function profile(): JsonResponse
+    public function profile(Request $request): JsonResponse
     {
-        $user = Auth::user();
+        $profileData = $this->getMyProfileAction->execute($request->user());
 
-        if ($user->persona_id === null || ! $user->hasProfile()) {
-            return $this->success(
-                [
-                    'has_profile' => false,
-                    'profile' => null,
-                ],
-                'El usuario no tiene un perfil creado'
-            );
-        }
-
-        $user->load('persona');
-
-        $relations = ['tipoDocumento', 'genero', 'nivel', 'talla', 'eps'];
-        $persona = $this->personaService->getPersonaById($user->persona_id, $relations);
+        $message = $profileData->hasProfile
+            ? 'Perfil obtenido exitosamente'
+            : 'El usuario no tiene un perfil creado';
 
         return $this->success(
-            [
-                'has_profile' => true,
-                'profile' => new PersonaResource($persona),
-            ],
-            'Perfil obtenido exitosamente'
+            $profileData,
+            $message
         );
     }
 }

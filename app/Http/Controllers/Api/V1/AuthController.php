@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Data\User\UserData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
-use App\Http\Resources\Api\V1\UserResource;
-use App\Traits\ApiResponse;
 use App\Services\AuthService;
+use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -26,7 +26,7 @@ class AuthController extends Controller
 
         return $this->created(
             [
-                'user' => new UserResource($result['user']),
+                'user' => UserData::from($result['user']),
                 'token' => $result['token'],
             ],
             'Usuario registrado exitosamente. Por favor verifica tu email.'
@@ -42,7 +42,7 @@ class AuthController extends Controller
 
         return $this->success(
             [
-                'user' => new UserResource($result['user']),
+                'user' => UserData::from($result['user']),
                 'token' => $result['token'],
             ],
             'Sesión iniciada exitosamente'
@@ -65,8 +65,11 @@ class AuthController extends Controller
 
     public function me(Request $request): JsonResponse
     {
+        $user = $request->user();
+        $user->load('persona');
+
         return $this->success(
-            new UserResource($request->user()),
+            UserData::from($user),
             'Usuario obtenido exitosamente'
         );
     }

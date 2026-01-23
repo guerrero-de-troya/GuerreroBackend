@@ -2,53 +2,23 @@
 
 namespace App\Http\Requests;
 
+use App\Data\Persona\UpdatePersonaData;
 use Illuminate\Foundation\Http\FormRequest;
-
 
 class UpdatePersonaRequest extends FormRequest
 {
-    /**
-     * Determinar si el usuario está autorizado para hacer esta petición
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Obtener las reglas de validación que se aplican a la petición
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         $personaId = $this->route('persona');
 
-        return [
-            'primer_nombre' => ['sometimes', 'string', 'max:255'],
-            'segundo_nombre' => ['nullable', 'string', 'max:255'],
-            'primer_apellido' => ['sometimes', 'string', 'max:255'],
-            'segundo_apellido' => ['nullable', 'string', 'max:255'],
-            'tipo_documento_id' => ['sometimes', 'exists:parametros,id'],
-            'numero_documento' => ['sometimes', 'string', 'max:255', "unique:personas,numero_documento,{$personaId}"],
-            'telefono' => ['sometimes', 'string', 'max:255', "unique:personas,telefono,{$personaId}"],
-            'edad' => ['sometimes', 'integer', 'min:0', 'max:150'],
-            'genero_id' => ['sometimes', 'exists:parametros,id'],
-            'nivel_id' => ['sometimes', 'nullable', 'exists:parametros,id'],
-            'camisa' => ['nullable', 'string', 'max:255'],
-            'talla_id' => ['nullable', 'exists:parametros,id'],
-            'eps_id' => ['sometimes', 'nullable', 'exists:parametros,id'],
-            'pais_id' => ['sometimes', 'nullable', 'exists:paises,id'],
-            'departamento_id' => ['sometimes', 'nullable', 'exists:departamentos,id'],
-            'municipio_id' => ['sometimes', 'nullable', 'exists:municipios,id'],
-        ];
+        return UpdatePersonaData::rules($personaId);
     }
 
-    /**
-     * Obtener mensajes de error personalizados para las reglas de validación
-     *
-     * @return array<string, string>
-     */
     public function messages(): array
     {
         return [
@@ -70,5 +40,10 @@ class UpdatePersonaRequest extends FormRequest
             'departamento_id.exists' => 'El departamento seleccionado no es válido.',
             'municipio_id.exists' => 'El municipio seleccionado no es válido.',
         ];
+    }
+
+    public function toDto(): UpdatePersonaData
+    {
+        return UpdatePersonaData::from($this->validated());
     }
 }

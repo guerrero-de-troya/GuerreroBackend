@@ -2,50 +2,21 @@
 
 namespace App\Http\Requests;
 
+use App\Data\Persona\StorePersonaData;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StorePersonaRequest extends FormRequest
 {
-    /**
-     * Determinar si el usuario está autorizado para hacer esta petición
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Obtener las reglas de validación que se aplican a la petición
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
-        return [
-            'primer_nombre' => ['required', 'string', 'max:255'],
-            'segundo_nombre' => ['nullable', 'string', 'max:255'],
-            'primer_apellido' => ['required', 'string', 'max:255'],
-            'segundo_apellido' => ['nullable', 'string', 'max:255'],
-            'tipo_documento_id' => ['required', 'exists:parametros,id'],
-            'numero_documento' => ['required', 'string', 'max:255', 'unique:personas,numero_documento'],
-            'telefono' => ['required', 'string', 'max:255', 'unique:personas,telefono'],
-            'edad' => ['required', 'integer', 'min:0', 'max:150'],
-            'genero_id' => ['required', 'exists:parametros,id'],
-            'nivel_id' => ['nullable', 'exists:parametros,id'],
-            'camisa' => ['nullable', 'string', 'max:255'],
-            'talla_id' => ['nullable', 'exists:parametros,id'],
-            'eps_id' => ['nullable', 'exists:parametros,id'],
-            'pais_id' => ['nullable', 'exists:paises,id'],
-            'departamento_id' => ['nullable', 'exists:departamentos,id'],
-            'municipio_id' => ['nullable', 'exists:municipios,id'],
-        ];
+        return StorePersonaData::rules();
     }
 
-    /**
-     * Obtener mensajes de error personalizados para las reglas de validación
-     *
-     * @return array<string, string>
-     */
     public function messages(): array
     {
         return [
@@ -74,5 +45,10 @@ class StorePersonaRequest extends FormRequest
             'departamento_id.exists' => 'El departamento seleccionado no es válido.',
             'municipio_id.exists' => 'El municipio seleccionado no es válido.',
         ];
+    }
+
+    public function toDto(): StorePersonaData
+    {
+        return StorePersonaData::from($this->validated());
     }
 }
