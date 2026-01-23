@@ -3,10 +3,13 @@
 namespace App\Http\Requests;
 
 use App\Data\Auth\ForgotPasswordData;
+use App\Http\Requests\Traits\NormalizesEmail;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ForgotPasswordRequest extends FormRequest
 {
+    use NormalizesEmail;
+
     public function authorize(): bool
     {
         return true;

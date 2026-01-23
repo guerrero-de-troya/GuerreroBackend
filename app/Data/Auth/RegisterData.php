@@ -3,6 +3,7 @@
 namespace App\Data\Auth;
 
 use Illuminate\Validation\Rules\Password;
+use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Attributes\MapName;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
@@ -13,6 +14,7 @@ class RegisterData extends Data
     public function __construct(
         public string $email,
         public string $password,
+        #[MapInputName('password_confirmation')]
         public string $passwordConfirmation,
     ) {}
 

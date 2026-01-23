@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Api\V1\Auth;
 
+use App\Actions\Auth\SendEmailVerificationAction;
+use App\Actions\Auth\VerifyEmailAction;
 use App\Http\Controllers\Controller;
 use App\Traits\ApiResponse;
-use Illuminate\Auth\Events\Verified;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -13,27 +13,27 @@ class EmailVerificationController extends Controller
 {
     use ApiResponse;
 
+    public function __construct(
+        private readonly SendEmailVerificationAction $sendEmailVerificationAction,
+        private readonly VerifyEmailAction $verifyEmailAction
+    ) {}
+
     public function send(Request $request): JsonResponse
     {
-        if ($request->user()->hasVerifiedEmail()) {
-            return $this->error('El email ya ha sido verificado.', 400);
-        }
+        $result = $this->sendEmailVerificationAction->execute($request->user());
 
-        $request->user()->sendEmailVerificationNotification();
-
-        return $this->success(null, 'Email de verificación enviado exitosamente.');
+        return $result['success']
+            ? $this->success(null, $result['message'])
+            : $this->error($result['message'], 400);
     }
 
-    public function verify(EmailVerificationRequest $request): JsonResponse
+    public function verify(Request $request): JsonResponse
     {
-        if ($request->user()->hasVerifiedEmail()) {
-            return $this->error('El email ya ha sido verificado.', 400);
-        }
+        $userId = (int) $request->route('id');
+        $result = $this->verifyEmailAction->execute($userId);
 
-        if ($request->user()->markEmailAsVerified()) {
-            event(new Verified($request->user()));
-        }
-
-        return $this->success(null, 'Email verificado exitosamente.');
+        return $result['success']
+            ? $this->success(null, $result['message'])
+            : $this->error($result['message'], $result['statusCode']);
     }
 }

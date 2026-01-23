@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace App\Http\Requests;
 
 use App\Data\Auth\ResetPasswordData;
+use App\Http\Requests\Traits\NormalizesEmail;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ResetPasswordRequest extends FormRequest
 {
+    use NormalizesEmail;
+
     public function authorize(): bool
     {
         return true;
@@ -32,6 +35,8 @@ class ResetPasswordRequest extends FormRequest
 
     public function toDto(): ResetPasswordData
     {
-        return ResetPasswordData::from($this->validated());
+        return ResetPasswordData::from(
+            $this->only(['token', 'email', 'password', 'password_confirmation'])
+        );
     }
 }

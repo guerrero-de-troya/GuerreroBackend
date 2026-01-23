@@ -8,6 +8,8 @@ use App\Actions\Auth\LogoutAction;
 use App\Actions\Auth\LogoutAllAction;
 use App\Actions\Auth\RegisterAction;
 use App\Actions\Auth\ResetPasswordAction;
+use App\Actions\Auth\SendEmailVerificationAction;
+use App\Actions\Auth\VerifyEmailAction;
 use App\Actions\Persona\CreatePersonaAction;
 use App\Actions\Persona\DeletePersonaAction;
 use App\Actions\Persona\GetMyProfileAction;
@@ -16,9 +18,9 @@ use App\Repositories\Contracts\PersonaRepositoryInterface;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use App\Repositories\PersonaRepository;
 use App\Repositories\UserRepository;
-use App\Services\CatalogoService;
+use App\Services\Query\CatalogoQueryService;
 use App\Services\Query\PersonaQueryService;
-use App\Services\UbicacionService;
+use App\Services\Query\UbicacionQueryService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -35,13 +37,13 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
 
         // Bindings de Services
-        $this->app->singleton(CatalogoService::class);
+        $this->app->singleton(CatalogoQueryService::class);
         $this->app->singleton(PersonaQueryService::class, function ($app) {
             return new PersonaQueryService(
                 $app->make(PersonaRepositoryInterface::class)
             );
         });
-        $this->app->singleton(UbicacionService::class);
+        $this->app->singleton(UbicacionQueryService::class);
 
         // Bindings de Actions Auth
         $this->app->singleton(RegisterAction::class, function ($app) {
@@ -70,6 +72,13 @@ class AppServiceProvider extends ServiceProvider
         });
 
         $this->app->singleton(ResetPasswordAction::class);
+
+        $this->app->singleton(SendEmailVerificationAction::class);
+        $this->app->singleton(VerifyEmailAction::class, function ($app) {
+            return new VerifyEmailAction(
+                $app->make(UserRepositoryInterface::class)
+            );
+        });
 
         // Bindings de Actions Persona
         $this->app->singleton(CreatePersonaAction::class, function ($app) {
