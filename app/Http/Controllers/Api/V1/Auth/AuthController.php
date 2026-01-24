@@ -40,18 +40,18 @@ class AuthController extends Controller
         return $this->respond($result['success'], $result);
     }
 
-    public function logout(Request $request): Response
+    public function logout(Request $request): JsonResponse
     {
-        $this->logoutAction->execute($request->user());
+        $result = $this->logoutAction->execute($request->user());
 
-        return $this->noContent();
+        return $this->respond($result['success'], $result);
     }
 
-    public function logoutAll(Request $request): Response
+    public function logoutAll(Request $request): JsonResponse
     {
-        $this->logoutAllAction->execute($request->user()->id);
+        $result = $this->logoutAllAction->execute($request->user()->id);
 
-        return $this->noContent();
+        return $this->respond($result['success'], $result);
     }
 
     public function me(Request $request): JsonResponse
