@@ -20,6 +20,11 @@ Route::prefix('v1')->group(function () {
             Route::get('/reset', [PasswordResetController::class, 'showResetForm'])->name('api.v1.password.reset.form');
             Route::post('/reset', [PasswordResetController::class, 'reset'])->name('api.v1.password.reset');
         });
+
+        // Verificación de email
+        Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
+            ->middleware(['signed', 'throttle:6,1'])
+            ->name('api.v1.verification.verify');
     });
 
     // Rutas protegidas de autenticación
@@ -28,15 +33,10 @@ Route::prefix('v1')->group(function () {
         Route::post('/logout-all', [AuthController::class, 'logoutAll'])->name('api.v1.auth.logout-all');
         Route::get('/me', [AuthController::class, 'me'])->name('api.v1.auth.me');
         
-        // Rutas de verificación de email (protegidas)
-        Route::prefix('email')->group(function () {
-            Route::post('/verification-notification', [EmailVerificationController::class, 'send'])
-                ->middleware('throttle:6,1')
-                ->name('api.v1.verification.send');
-            Route::get('/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
-                ->middleware(['signed', 'throttle:6,1'])
-                ->name('api.v1.verification.verify');
-        });
+        // Reenviar verificación de email
+        Route::post('/email/verification-notification', [EmailVerificationController::class, 'send'])
+            ->middleware('throttle:6,1')
+            ->name('api.v1.verification.send');
     });
 
     // Rutas protegidas con autenticación
