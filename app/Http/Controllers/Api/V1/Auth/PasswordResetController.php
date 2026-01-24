@@ -9,6 +9,7 @@ use App\Http\Requests\ForgotPasswordRequest;
 use App\Http\Requests\ResetPasswordRequest;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class PasswordResetController extends Controller
 {
@@ -24,6 +25,18 @@ class PasswordResetController extends Controller
         $result = $this->forgotPasswordAction->execute($request->toDto());
 
         return $this->respond($result['success'], $result);
+    }
+
+    public function showResetForm(Request $request): JsonResponse
+    {
+        return response()->json([
+            'success' => true,
+            'message' => 'Token de restablecimiento de contraseña',
+            'data' => [
+                'token' => $request->query('token'),
+                'email' => $request->query('email'),
+            ]
+        ]);
     }
 
     public function reset(ResetPasswordRequest $request): JsonResponse

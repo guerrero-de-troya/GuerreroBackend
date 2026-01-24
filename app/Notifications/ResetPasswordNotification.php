@@ -2,40 +2,29 @@
 
 namespace App\Notifications;
 
-use Illuminate\Bus\Queueable;
+use Illuminate\Auth\Notifications\ResetPassword;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Notifications\Notification;
 
-class ResetPasswordNotification extends Notification
+class ResetPasswordNotification extends ResetPassword
 {
-    use Queueable;
-
-    public function __construct(
-        public string $token
-    ) {}
-
-    public function via($notifiable): array
+    protected function resetUrl($notifiable): string
     {
-        return ['mail'];
+        $appUrl = Config::get('app.url');
+        
+        return "{$appUrl}/api/v1/password/reset?token={$this->token}&email={$notifiable->getEmailForPasswordReset()}";
     }
 
     public function toMail($notifiable): MailMessage
     {
         $resetUrl = $this->resetUrl($notifiable);
+        $expirationTime = Config::get('auth.passwords.users.expire', 5);
 
         return (new MailMessage)
-            ->subject('Restablecer Contraseña - Guerrero de Troya')
+            ->subject('Restablece tu contraseña - Guerrero de Troya')
             ->view('emails.reset-password', [
                 'resetUrl' => $resetUrl,
-                'token' => $this->token,
-                'expirationTime' => config('auth.passwords.'.config('auth.defaults.passwords').'.expire', 60),
+                'expirationTime' => $expirationTime,
             ]);
-    }
-
-    protected function resetUrl($notifiable): string
-    {
-        $frontendUrl = config('app.frontend_url', 'http://localhost:3000');
-        
-        return $frontendUrl . '/reset-password?token=' . $this->token . '&email=' . urlencode($notifiable->email);
     }
 }

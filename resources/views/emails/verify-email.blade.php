@@ -227,9 +227,6 @@
                                 <p class="footer-text" style="font-size: 13px; color: #94a3b8; margin: 0 0 8px 0;">
                                     © {{ date('Y') }} Guerrero de Troya. Todos los derechos reservados.
                                 </p>
-                                <p class="footer-text" style="font-size: 13px; color: #94a3b8; margin: 0;">
-                                    <a href="{{ config('app.url') }}" class="footer-link" style="color: #a855f7; text-decoration: none;">Visita nuestro sitio web</a>
-                                </p>
                             </td>
                         </tr>
                     </table>
