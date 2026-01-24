@@ -23,7 +23,7 @@ Route::prefix('v1')->group(function () {
 
         // Verificación de email
         Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
-            ->middleware(['signed', 'throttle:6,1'])
+            ->middleware(['signed', 'throttle:3,60'])
             ->name('api.v1.verification.verify');
     });
 
@@ -35,7 +35,7 @@ Route::prefix('v1')->group(function () {
         
         // Reenviar verificación de email
         Route::post('/email/verification-notification', [EmailVerificationController::class, 'send'])
-            ->middleware('throttle:6,1')
+            ->middleware('throttle:3,60')
             ->name('api.v1.verification.send');
     });
 
