@@ -16,10 +16,12 @@ class ForgotPasswordAction
     {
         $email = strtolower($data->email);
 
-        if (! $this->userRepository->existsByEmail($email)) {
+        $user = $this->userRepository->findByEmail($email);
+        
+        if (! $user || ! $user->hasVerifiedEmail()) {
             return [
                 'success' => true,
-                'message' => 'Si el email existe, se enviará un enlace para restablecer la contraseña.',
+                'message' => 'Si el email existe y está verificado, se enviará un enlace para restablecer la contraseña.',
                 'statusCode' => 200,
             ];
         }

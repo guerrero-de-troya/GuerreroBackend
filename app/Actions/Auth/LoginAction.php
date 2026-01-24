@@ -19,7 +19,9 @@ class LoginAction
 
         $user = $this->userRepository->findByEmail($email);
 
-        if (! $user || ! Hash::check($data->password, $user->password)) {
+        $passwordValid = $user && Hash::check($data->password, $user->password);
+
+        if (! $passwordValid || ! $user->hasVerifiedEmail()) {
             return [
                 'success' => false,
                 'message' => 'Credenciales inválidas.',
@@ -27,12 +29,9 @@ class LoginAction
             ];
         }
 
-        if (! $user->hasVerifiedEmail()) {
-            return [
-                'success' => false,
-                'message' => 'Email no verificado. Por favor verifica tu email.',
-                'statusCode' => 403,
-            ];
+        // Limitar tokens activos a 5 dispositivos
+        if ($user->tokens()->count() >= 5) {
+            $user->tokens()->oldest()->first()?->delete();
         }
 
         $token = $user->createToken('auth-token')->plainTextToken;

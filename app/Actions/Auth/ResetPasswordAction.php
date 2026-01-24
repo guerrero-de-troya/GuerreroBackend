@@ -24,6 +24,7 @@ class ResetPasswordAction
                 $user->forceFill([
                     'password' => Hash::make($password),
                 ])->save();
+                $user->tokens()->delete();
             }
         );
 

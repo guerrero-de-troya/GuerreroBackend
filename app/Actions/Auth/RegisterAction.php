@@ -6,6 +6,7 @@ use App\Data\Auth\RegisterData;
 use App\Data\User\UserData;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class RegisterAction
@@ -16,15 +17,28 @@ class RegisterAction
 
     public function execute(RegisterData $data): array
     {
-        $user = $this->userRepository->create([
-            'email' => strtolower($data->email),
-            'password' => Hash::make($data->password),
-            'persona_id' => null,
-        ]);
+        $email = strtolower($data->email);
 
-        $user = $user->fresh();
+        if ($this->userRepository->existsByEmail($email)) {
+            return [
+                'success' => false,
+                'message' => 'El email ya está registrado.',
+                'statusCode' => 422,
+            ];
+        }
 
-        $user->assignRole('usuario');
+        $user = DB::transaction(function () use ($email, $data) {
+            $user = $this->userRepository->create([
+                'email' => $email,
+                'password' => Hash::make($data->password),
+                'persona_id' => null,
+            ]);
+
+            $user = $user->fresh();
+            $user->assignRole('usuario');
+
+            return $user;
+        });
 
         event(new Registered($user));
 

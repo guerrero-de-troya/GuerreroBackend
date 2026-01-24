@@ -3,6 +3,7 @@
 namespace App\Actions\Auth;
 
 use App\Models\User;
+use Illuminate\Support\Facades\RateLimiter;
 
 class SendEmailVerificationAction
 {
@@ -15,6 +16,19 @@ class SendEmailVerificationAction
                 'statusCode' => 400,
             ];
         }
+
+        // Rate limiting adicional por usuario
+        $key = 'send-verification:' . $user->id;
+        
+        if (RateLimiter::tooManyAttempts($key, 3)) {
+            return [
+                'success' => false,
+                'message' => "Demasiados intentos. Intenta nuevamente mas tarde.",
+                'statusCode' => 429,
+            ];
+        }
+
+        RateLimiter::hit($key, 3600); // 1 hora
 
         $user->sendEmailVerificationNotification();
 
