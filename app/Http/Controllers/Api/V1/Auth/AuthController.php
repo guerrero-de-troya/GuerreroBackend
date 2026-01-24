@@ -13,7 +13,6 @@ use App\Http\Requests\RegisterRequest;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
 class AuthController extends Controller
 {
@@ -49,7 +48,7 @@ class AuthController extends Controller
 
     public function logoutAll(Request $request): JsonResponse
     {
-        $result = $this->logoutAllAction->execute($request->user()->id);
+        $result = $this->logoutAllAction->execute($request->user());
 
         return $this->respond($result['success'], $result);
     }

@@ -34,7 +34,7 @@ class ResetPasswordAction
                 'statusCode' => 200,
             ]
             : [
-                'error' => true,
+                'success' => false,
                 'message' => 'El token es inválido o ha expirado.',
                 'statusCode' => 400,
             ];

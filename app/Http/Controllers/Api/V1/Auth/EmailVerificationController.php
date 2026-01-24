@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Auth;
 use App\Actions\Auth\SendEmailVerificationAction;
 use App\Actions\Auth\VerifyEmailAction;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\EmailVerificationRequest;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -25,10 +26,9 @@ class EmailVerificationController extends Controller
         return $this->respond($result['success'], $result);
     }
 
-    public function verify(Request $request): JsonResponse
+    public function verify(EmailVerificationRequest $request): JsonResponse
     {
-        $userId = (int) $request->route('id');
-        $result = $this->verifyEmailAction->execute($userId);
+        $result = $this->verifyEmailAction->execute($request->user());
 
         return $this->respond($result['success'], $result);
     }

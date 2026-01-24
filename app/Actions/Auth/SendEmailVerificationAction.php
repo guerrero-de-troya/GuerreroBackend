@@ -20,7 +20,7 @@ class SendEmailVerificationAction
 
         return [
             'success' => true,
-            'message' => 'Email de verificación enviado exitosamente.',
+            'message' => 'Email de verificación reenviado.',
             'statusCode' => 200,
         ];
     }

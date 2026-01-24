@@ -12,9 +12,6 @@ class ForgotPasswordAction
         private readonly UserRepositoryInterface $userRepository
     ) {}
 
-    /**
-     * @return array{success: bool, message: string, statusCode: int}
-     */
     public function execute(ForgotPasswordData $data): array
     {
         $email = strtolower($data->email);
@@ -29,18 +26,24 @@ class ForgotPasswordAction
 
         $status = Password::sendResetLink(['email' => $email]);
 
-        if ($status === Password::RESET_LINK_SENT) {
-            return [
+        return match ($status) {
+            Password::RESET_LINK_SENT => [
                 'success' => true,
                 'message' => 'Se ha enviado un enlace para restablecer la contraseña a tu email.',
                 'statusCode' => 200,
-            ];
-        }
+            ],
 
-        return [
-            'success' => false,
-            'message' => 'Error al enviar el enlace de restablecimiento.',
-            'statusCode' => 500,
-        ];
+            Password::RESET_THROTTLED => [
+                'success' => false,
+                'message' => 'Debes esperar antes de volver a solicitar el restablecimiento.',
+                'statusCode' => 429,
+            ],
+
+            default => [
+                'success' => false,
+                'message' => 'No se pudo enviar el enlace de restablecimiento.',
+                'statusCode' => 500,
+            ],
+        };
     }
 }

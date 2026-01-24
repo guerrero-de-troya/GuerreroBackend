@@ -24,6 +24,8 @@ class RegisterAction
 
         $user = $user->fresh();
 
+        $user->assignRole('usuario');
+
         event(new Registered($user));
 
         $token = $user->createToken('auth-token')->plainTextToken;
