@@ -216,7 +216,7 @@
                                     </a>
                                 </div> 
                                 <p class="expiration-text" style="margin-top: 30px; font-size: 13px; color: #94a3b8; line-height: 1.7;">
-                                    Este enlace expirará en {{ $expirationTime ?? 60 }} minutos. Si no solicitaste esta verificación, puedes ignorar este correo de forma segura.
+                                    Este enlace expirará en {{ $expirationTime ?? 5 }} minutos. Si no solicitaste esta verificación, puedes ignorar este correo de forma segura.
                                 </p>
                             </td>
                         </tr>

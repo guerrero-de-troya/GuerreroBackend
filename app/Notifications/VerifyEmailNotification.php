@@ -25,7 +25,7 @@ class VerifyEmailNotification extends VerifyEmail
     public function toMail($notifiable): MailMessage
     {
         $verificationUrl = $this->verificationUrl($notifiable);
-        $expirationTime = Config::get('auth.verification.expire', 60);
+        $expirationTime = Config::get('auth.verification.expire', 5);
 
         return (new MailMessage)
             ->subject('Verifica tu correo electrónico - Guerrero de Troya')
