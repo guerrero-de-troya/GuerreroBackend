@@ -3,15 +3,19 @@
 namespace App\Actions\Auth;
 
 use App\Data\Auth\ResetPasswordData;
-use Illuminate\Support\Facades\Hash;
+use App\Data\Auth\Results\ResetPasswordResult;
+use App\Services\Auth\PasswordService;
+use App\Services\Auth\TokenService;
 use Illuminate\Support\Facades\Password;
 
 class ResetPasswordAction
 {
-    /**
-     * @return array{success: bool, message: string, statusCode: int}
-     */
-    public function execute(ResetPasswordData $data): array
+    public function __construct(
+        private readonly PasswordService $passwordService,
+        private readonly TokenService $tokenService
+    ) {}
+
+    public function execute(ResetPasswordData $data): ResetPasswordResult
     {
         $status = Password::reset(
             [
@@ -21,23 +25,13 @@ class ResetPasswordAction
                 'token' => $data->token,
             ],
             function ($user, $password) {
-                $user->forceFill([
-                    'password' => Hash::make($password),
-                ])->save();
-                $user->tokens()->delete();
+                $this->passwordService->updatePassword($user, $password);
+                $this->tokenService->revokeAll($user);
             }
         );
 
         return $status === Password::PASSWORD_RESET
-            ? [
-                'success' => true,
-                'message' => 'Contraseña restablecida exitosamente.',
-                'statusCode' => 200,
-            ]
-            : [
-                'success' => false,
-                'message' => 'El token es inválido o ha expirado.',
-                'statusCode' => 400,
-            ];
+            ? ResetPasswordResult::success()
+            : ResetPasswordResult::invalidToken();
     }
 }

@@ -45,65 +45,8 @@ class AppServiceProvider extends ServiceProvider
         });
         $this->app->singleton(UbicacionQueryService::class);
 
-        // Bindings de Actions Auth
-        $this->app->singleton(RegisterAction::class, function ($app) {
-            return new RegisterAction(
-                $app->make(UserRepositoryInterface::class)
-            );
-        });
-
-        $this->app->singleton(LoginAction::class, function ($app) {
-            return new LoginAction(
-                $app->make(UserRepositoryInterface::class)
-            );
-        });
-
-        $this->app->singleton(LogoutAction::class);
-        $this->app->singleton(LogoutAllAction::class, function ($app) {
-            return new LogoutAllAction(
-                $app->make(UserRepositoryInterface::class)
-            );
-        });
-
-        $this->app->singleton(ForgotPasswordAction::class, function ($app) {
-            return new ForgotPasswordAction(
-                $app->make(UserRepositoryInterface::class)
-            );
-        });
-
-        $this->app->singleton(ResetPasswordAction::class);
-
-        $this->app->singleton(SendEmailVerificationAction::class);
-        $this->app->singleton(VerifyEmailAction::class, function ($app) {
-            return new VerifyEmailAction(
-                $app->make(UserRepositoryInterface::class)
-            );
-        });
-
-        // Bindings de Actions Persona
-        $this->app->singleton(CreatePersonaAction::class, function ($app) {
-            return new CreatePersonaAction(
-                $app->make(PersonaRepositoryInterface::class)
-            );
-        });
-
-        $this->app->singleton(UpdatePersonaAction::class, function ($app) {
-            return new UpdatePersonaAction(
-                $app->make(PersonaRepositoryInterface::class)
-            );
-        });
-
-        $this->app->singleton(DeletePersonaAction::class, function ($app) {
-            return new DeletePersonaAction(
-                $app->make(PersonaRepositoryInterface::class)
-            );
-        });
-
-        $this->app->singleton(GetMyProfileAction::class, function ($app) {
-            return new GetMyProfileAction(
-                $app->make(PersonaQueryService::class)
-            );
-        });
+        // Actions Auth - Laravel resuelve automáticamente las dependencias
+        // No necesitan bindings manuales porque todas sus dependencias están registradas
     }
 
     /**

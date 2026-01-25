@@ -2,22 +2,20 @@
 
 namespace App\Actions\Auth;
 
+use App\Data\Auth\Results\LogoutResult;
 use App\Models\User;
-use Laravel\Sanctum\PersonalAccessToken;
+use App\Services\Auth\TokenService;
 
 class LogoutAction
 {
-    public function execute(User $user): array
-    {
-        $token = $user->currentAccessToken();
-        if ($token instanceof PersonalAccessToken) {
-            $token->delete();
-        }
+    public function __construct(
+        private readonly TokenService $tokenService
+    ) {}
 
-        return [
-            'success' => true,
-            'message' => 'Cierre de sesión exitoso',
-            'statusCode' => 200,
-        ];
+    public function execute(User $user): LogoutResult
+    {
+        $this->tokenService->revokeCurrent($user);
+
+        return LogoutResult::success();
     }
 }

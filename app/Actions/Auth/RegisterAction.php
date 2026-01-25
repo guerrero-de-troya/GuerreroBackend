@@ -3,34 +3,34 @@
 namespace App\Actions\Auth;
 
 use App\Data\Auth\RegisterData;
+use App\Data\Auth\Results\RegisterResult;
 use App\Data\User\UserData;
 use App\Repositories\Contracts\UserRepositoryInterface;
+use App\Services\Auth\PasswordService;
+use App\Services\Auth\TokenService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 
 class RegisterAction
 {
     public function __construct(
-        private readonly UserRepositoryInterface $userRepository
+        private readonly UserRepositoryInterface $userRepository,
+        private readonly PasswordService $passwordService,
+        private readonly TokenService $tokenService
     ) {}
 
-    public function execute(RegisterData $data): array
+    public function execute(RegisterData $data): RegisterResult
     {
         $email = strtolower($data->email);
 
         if ($this->userRepository->existsByEmail($email)) {
-            return [
-                'success' => false,
-                'message' => 'El email ya está registrado.',
-                'statusCode' => 422,
-            ];
+            return RegisterResult::emailAlreadyExists();
         }
 
         $user = DB::transaction(function () use ($email, $data) {
             $user = $this->userRepository->create([
                 'email' => $email,
-                'password' => Hash::make($data->password),
+                'password' => $this->passwordService->hash($data->password),
                 'persona_id' => null,
             ]);
 
@@ -42,16 +42,8 @@ class RegisterAction
 
         event(new Registered($user));
 
-        $token = $user->createToken('auth-token')->plainTextToken;
+        $token = $this->tokenService->create($user);
 
-        return [
-            'success' => true,
-            'message' => 'Usuario registrado exitosamente. Por favor verifica tu email.',
-            'data' => [
-                'user' => UserData::from($user),
-                'token' => $token,
-            ],
-            'statusCode' => 201,
-        ];
+        return RegisterResult::success(UserData::from($user), $token);
     }
 }

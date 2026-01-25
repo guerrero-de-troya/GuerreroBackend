@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api\V1\Auth;
 use App\Actions\Auth\ForgotPasswordAction;
 use App\Actions\Auth\ResetPasswordAction;
 use App\Http\Controllers\Controller;
+use App\Http\Mappers\Auth\ForgotPasswordHttpMapper;
+use App\Http\Mappers\Auth\ResetPasswordHttpMapper;
 use App\Http\Requests\ForgotPasswordRequest;
 use App\Http\Requests\ResetPasswordRequest;
 use App\Traits\ApiResponse;
@@ -17,14 +19,16 @@ class PasswordResetController extends Controller
 
     public function __construct(
         private readonly ForgotPasswordAction $forgotPasswordAction,
-        private readonly ResetPasswordAction $resetPasswordAction
+        private readonly ResetPasswordAction $resetPasswordAction,
+        private readonly ForgotPasswordHttpMapper $forgotMapper,
+        private readonly ResetPasswordHttpMapper $resetMapper
     ) {}
 
     public function forgot(ForgotPasswordRequest $request): JsonResponse
     {
         $result = $this->forgotPasswordAction->execute($request->toDto());
 
-        return $this->respond($result['success'], $result);
+        return $this->forgotMapper->toResponse($result);
     }
 
     public function showResetForm(Request $request): JsonResponse
@@ -43,6 +47,6 @@ class PasswordResetController extends Controller
     {
         $result = $this->resetPasswordAction->execute($request->toDto());
 
-        return $this->respond($result['success'], $result);
+        return $this->resetMapper->toResponse($result);
     }
 }

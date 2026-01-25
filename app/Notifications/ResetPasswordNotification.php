@@ -12,7 +12,7 @@ class ResetPasswordNotification extends ResetPassword
     {
         $appUrl = Config::get('app.url');
         
-        return "{$appUrl}/api/v1/password/reset?token={$this->token}&email={$notifiable->getEmailForPasswordReset()}";
+        return "{$appUrl}/api/v1/auth/password/reset?token={$this->token}&email={$notifiable->getEmailForPasswordReset()}";
     }
 
     public function toMail($notifiable): MailMessage
