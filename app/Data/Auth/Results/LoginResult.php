@@ -11,4 +11,12 @@ class LoginResult extends AuthResultWithToken
             reason: 'invalid_credentials'
         );
     }
+
+    public static function emailNotVerified(): self
+    {
+        return new self(
+            success: false,
+            reason: 'email_not_verified'
+        );
+    }
 }

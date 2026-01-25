@@ -7,7 +7,6 @@ use Illuminate\Http\Response;
 
 trait ApiResponse
 {
-   
     protected function respond(bool $success, array $result): JsonResponse
     {
         if ($success) {

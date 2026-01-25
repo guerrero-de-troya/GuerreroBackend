@@ -4,7 +4,6 @@ namespace App\Actions\Auth;
 
 use App\Data\Auth\RegisterData;
 use App\Data\Auth\Results\RegisterResult;
-use App\Data\User\UserData;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use App\Services\Auth\PasswordService;
 use App\Services\Auth\TokenService;
@@ -42,6 +41,6 @@ class RegisterAction
 
         $token = $this->tokenService->create($user);
 
-        return RegisterResult::success(UserData::from($user), $token);
+        return RegisterResult::success($user, $token);
     }
 }

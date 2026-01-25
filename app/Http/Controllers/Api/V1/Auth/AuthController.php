@@ -6,13 +6,10 @@ use App\Actions\Auth\LoginAction;
 use App\Actions\Auth\LogoutAction;
 use App\Actions\Auth\LogoutAllAction;
 use App\Actions\Auth\RegisterAction;
-use App\Data\User\UserData;
 use App\Http\Controllers\Controller;
-use App\Http\Mappers\Auth\LoginHttpMapper;
-use App\Http\Mappers\Auth\LogoutHttpMapper;
-use App\Http\Mappers\Auth\RegisterHttpMapper;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
+use App\Http\Resources\UserResource;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -25,38 +22,56 @@ class AuthController extends Controller
         private readonly RegisterAction $registerAction,
         private readonly LoginAction $loginAction,
         private readonly LogoutAction $logoutAction,
-        private readonly LogoutAllAction $logoutAllAction,
-        private readonly RegisterHttpMapper $registerMapper,
-        private readonly LoginHttpMapper $loginMapper,
-        private readonly LogoutHttpMapper $logoutMapper
+        private readonly LogoutAllAction $logoutAllAction
     ) {}
 
     public function register(RegisterRequest $request): JsonResponse
     {
         $result = $this->registerAction->execute($request->toDto());
 
-        return $this->registerMapper->toResponse($result);
+        if (!$result->success) {
+            return match ($result->reason) {
+                'email_already_exists' => $this->error('El email ya está registrado.', 422),
+                default => $this->error('Error desconocido.', 500),
+            };
+        }
+
+        return $this->created(
+            data: (new UserResource($result->user))->withToken($result->token),
+            message: 'Usuario registrado exitosamente. Por favor verifica tu email.'
+        );
     }
 
     public function login(LoginRequest $request): JsonResponse
     {
         $result = $this->loginAction->execute($request->toDto());
 
-        return $this->loginMapper->toResponse($result);
+        if (!$result->success) {
+            return match ($result->reason) {
+                'invalid_credentials' => $this->error('Credenciales inválidas.', 401),
+                'email_not_verified' => $this->error('Debes verificar tu email antes de iniciar sesión.', 403),
+                default => $this->error('Error desconocido.', 500),
+            };
+        }
+
+        return $this->success(
+            data: (new UserResource($result->user))->withToken($result->token),
+            message: 'Sesión iniciada exitosamente'
+        );
     }
 
     public function logout(Request $request): JsonResponse
     {
-        $result = $this->logoutAction->execute($request->user());
+        $this->logoutAction->execute($request->user());
 
-        return $this->logoutMapper->toResponse($result);
+        return $this->success(message: 'Sesión cerrada exitosamente');
     }
 
     public function logoutAll(Request $request): JsonResponse
     {
-        $result = $this->logoutAllAction->execute($request->user());
+        $this->logoutAllAction->execute($request->user());
 
-        return $this->logoutMapper->toResponse($result);
+        return $this->success(message: 'Todas las sesiones cerradas exitosamente');
     }
 
     public function me(Request $request): JsonResponse
@@ -65,8 +80,8 @@ class AuthController extends Controller
         $user->load('persona');
 
         return $this->success(
-            UserData::from($user),
-            'Usuario obtenido exitosamente'
+            data: new UserResource($user),
+            message: 'Usuario obtenido exitosamente'
         );
     }
 }

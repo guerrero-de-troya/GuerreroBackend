@@ -5,8 +5,6 @@ namespace App\Http\Controllers\Api\V1\Auth;
 use App\Actions\Auth\ForgotPasswordAction;
 use App\Actions\Auth\ResetPasswordAction;
 use App\Http\Controllers\Controller;
-use App\Http\Mappers\Auth\ForgotPasswordHttpMapper;
-use App\Http\Mappers\Auth\ResetPasswordHttpMapper;
 use App\Http\Requests\ForgotPasswordRequest;
 use App\Http\Requests\ResetPasswordRequest;
 use App\Traits\ApiResponse;
@@ -19,16 +17,25 @@ class PasswordResetController extends Controller
 
     public function __construct(
         private readonly ForgotPasswordAction $forgotPasswordAction,
-        private readonly ResetPasswordAction $resetPasswordAction,
-        private readonly ForgotPasswordHttpMapper $forgotMapper,
-        private readonly ResetPasswordHttpMapper $resetMapper
+        private readonly ResetPasswordAction $resetPasswordAction
     ) {}
 
     public function forgot(ForgotPasswordRequest $request): JsonResponse
     {
         $result = $this->forgotPasswordAction->execute($request->toDto());
 
-        return $this->forgotMapper->toResponse($result);
+        return match ($result->reason) {
+            'sent' => $this->success(
+                message: 'Se ha enviado un enlace para restablecer la contraseña a tu email.'
+            ),
+            'throttled' => $this->error(
+                message: 'Debes esperar antes de volver a solicitar el restablecimiento.',
+                statusCode: 429
+            ),
+            default => $this->success(
+                message: 'Si el email existe y está verificado, se enviará un enlace para restablecer la contraseña.'
+            ),
+        };
     }
 
     public function showResetForm(Request $request): JsonResponse
@@ -47,6 +54,18 @@ class PasswordResetController extends Controller
     {
         $result = $this->resetPasswordAction->execute($request->toDto());
 
-        return $this->resetMapper->toResponse($result);
+        return match ($result->reason) {
+            'password_reset' => $this->success(
+                message: 'Contraseña restablecida exitosamente.'
+            ),
+            'invalid_token' => $this->error(
+                message: 'El token es inválido o ha expirado.',
+                statusCode: 400
+            ),
+            default => $this->error(
+                message: 'Error desconocido.',
+                statusCode: 500
+            ),
+        };
     }
 }
