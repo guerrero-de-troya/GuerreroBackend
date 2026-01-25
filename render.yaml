@@ -1,19 +1,17 @@
 services:
-  # Servicio Web de Laravel
+  # Servicio Web de Laravel con Docker
   - type: web
     name: backend-api
-    runtime: php
-    buildCommand: "./build.sh"
-    # Las migraciones se ejecutan antes de iniciar el servicio
-    preDeployCommand: "php artisan migrate --seed --force --no-interaction"
-    startCommand: "php artisan serve --host=0.0.0.0 --port=$PORT"
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
     envVars:
       - key: APP_ENV
         value: production
       - key: APP_DEBUG
-        value: false
+        value: "false"
       - key: LOG_CHANNEL
-        value: errorlog
+        value: stderr
       - key: SESSION_DRIVER
         value: cookie
       - key: CACHE_STORE

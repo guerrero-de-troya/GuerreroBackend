@@ -1,0 +1,50 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# IDE
+.idea
+.vscode
+.cursor
+.cursorrules
+*.swp
+*.swo
+*~
+
+# Laravel
+/node_modules
+/public/hot
+/public/storage
+/storage/*.key
+/storage/pail
+/vendor
+.env
+.env.backup
+.env.production
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+
+# Testing
+/tests
+.phpunit.cache
+phpunit.xml
+
+# Build
+/public/build
+
+# Documentation
+README.md
+DEPLOY_RENDER.md
+.github
+
+# Otros
+.DS_Store
+Thumbs.db
+*.log
+boost.json
+build.sh
+Procfile
