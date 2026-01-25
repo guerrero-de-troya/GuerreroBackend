@@ -67,4 +67,9 @@ trait BaseRepositoryTrait
     {
         return $this->model();
     }
+
+    protected function withRelationsIfNotEmpty($query, array $relations = [])
+    {
+        return ! empty($relations) ? $query->with($relations) : $query;
+    }
 }

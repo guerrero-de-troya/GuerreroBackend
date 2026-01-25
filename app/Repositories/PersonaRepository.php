@@ -24,10 +24,7 @@ class PersonaRepository implements PersonaRepositoryInterface
     public function findOrFailWithRelations(int|string $id, array $relations = []): Persona
     {
         $query = $this->model->newQuery();
-
-        if (! empty($relations)) {
-            $query->with($relations);
-        }
+        $query = $this->withRelationsIfNotEmpty($query, $relations);
 
         return $query->findOrFail($id);
     }
@@ -35,10 +32,7 @@ class PersonaRepository implements PersonaRepositoryInterface
     public function allWithRelations(array $relations = []): Collection
     {
         $query = $this->model->newQuery();
-
-        if (! empty($relations)) {
-            $query->with($relations);
-        }
+        $query = $this->withRelationsIfNotEmpty($query, $relations);
 
         return $query->get();
     }

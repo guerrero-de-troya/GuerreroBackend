@@ -19,9 +19,7 @@ class LoginAction
 
     public function execute(LoginData $data): LoginResult
     {
-        $email = strtolower($data->email);
-
-        $user = $this->userRepository->findByEmail($email);
+        $user = $this->userRepository->findByEmail($data->email);
 
         $passwordValid = $user && $this->passwordService->verify($data->password, $user->password);
 

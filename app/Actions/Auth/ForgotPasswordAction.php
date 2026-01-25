@@ -15,15 +15,13 @@ class ForgotPasswordAction
 
     public function execute(ForgotPasswordData $data): ForgotPasswordResult
     {
-        $email = strtolower($data->email);
-
-        $user = $this->userRepository->findByEmail($email);
+        $user = $this->userRepository->findByEmail($data->email);
         
         if (! $user || ! $user->hasVerifiedEmail()) {
             return ForgotPasswordResult::ignored();
         }
 
-        $status = Password::sendResetLink(['email' => $email]);
+        $status = Password::sendResetLink(['email' => $data->email]);
 
         return match ($status) {
             Password::RESET_LINK_SENT => ForgotPasswordResult::sent(),

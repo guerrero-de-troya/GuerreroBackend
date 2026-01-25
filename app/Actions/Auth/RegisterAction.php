@@ -21,15 +21,13 @@ class RegisterAction
 
     public function execute(RegisterData $data): RegisterResult
     {
-        $email = strtolower($data->email);
-
-        if ($this->userRepository->existsByEmail($email)) {
+        if ($this->userRepository->existsByEmail($data->email)) {
             return RegisterResult::emailAlreadyExists();
         }
 
-        $user = DB::transaction(function () use ($email, $data) {
+        $user = DB::transaction(function () use ($data) {
             $user = $this->userRepository->create([
-                'email' => $email,
+                'email' => $data->email,
                 'password' => $this->passwordService->hash($data->password),
                 'persona_id' => null,
             ]);

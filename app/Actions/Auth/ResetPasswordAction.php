@@ -19,7 +19,7 @@ class ResetPasswordAction
     {
         $status = Password::reset(
             [
-                'email' => strtolower($data->email),
+                'email' => $data->email,
                 'password' => $data->password,
                 'password_confirmation' => $data->passwordConfirmation,
                 'token' => $data->token,

@@ -2,7 +2,7 @@
 
 namespace App\Services\Query;
 
-use App\Exceptions\TemaNotFoundException;
+use App\Exceptions\ResourceNotFoundException;
 use App\Models\Parametro;
 use App\Models\Tema;
 use Illuminate\Database\Eloquent\Collection;
@@ -23,7 +23,7 @@ class CatalogoQueryService
             ->first();
 
         if ($tema === null) {
-            throw new TemaNotFoundException($temaName);
+            throw new ResourceNotFoundException('Tema', $temaName);
         }
 
         return $tema;
@@ -34,7 +34,7 @@ class CatalogoQueryService
         $tema = Tema::where('name', $temaName)->first();
 
         if ($tema === null) {
-            throw new TemaNotFoundException($temaName);
+            throw new ResourceNotFoundException('Tema', $temaName);
         }
 
         return $tema->parametros;
