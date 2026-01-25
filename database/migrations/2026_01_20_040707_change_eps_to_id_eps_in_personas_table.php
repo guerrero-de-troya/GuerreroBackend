@@ -30,8 +30,10 @@ return new class extends Migration
         });
 
         Schema::table('personas', function (Blueprint $table) {
-            $table->dropForeign(['eps_id']);
-            $table->dropColumn('eps_id');
+            if (Schema::hasColumn('personas', 'eps_id')) {
+                $table->dropForeign(['eps_id']);
+                $table->dropColumn('eps_id');
+            }
         });
     }
 };
