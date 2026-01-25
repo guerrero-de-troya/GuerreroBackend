@@ -1,0 +1,77 @@
+services:
+  # Servicio Web de Laravel
+  - type: web
+    name: backend-api
+    runtime: php
+    buildCommand: "./build.sh"
+    # Las migraciones se ejecutan antes de iniciar el servicio
+    preDeployCommand: "php artisan migrate --seed --force --no-interaction"
+    startCommand: "php artisan serve --host=0.0.0.0 --port=$PORT"
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: LOG_CHANNEL
+        value: errorlog
+      - key: SESSION_DRIVER
+        value: cookie
+      - key: CACHE_STORE
+        value: database
+      - key: QUEUE_CONNECTION
+        value: database
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        fromDatabase:
+          name: backend-guerrero
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: backend-guerrero
+          property: port
+      - key: DB_DATABASE
+        fromDatabase:
+          name: backend-guerrero
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: backend-guerrero
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: backend-guerrero
+          property: password
+      - key: APP_KEY
+        generateValue: true
+      - key: APP_NAME
+        sync: false
+      - key: APP_URL
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false
+      - key: MAIL_MAILER
+        sync: false
+      - key: MAIL_HOST
+        sync: false
+      - key: MAIL_PORT
+        sync: false
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
+      - key: MAIL_ENCRYPTION
+        sync: false
+      - key: MAIL_FROM_ADDRESS
+        sync: false
+      - key: MAIL_FROM_NAME
+        sync: false
+
+databases:
+  # Base de datos PostgreSQL
+  - name: backend-guerrero
+    databaseName: backend
+    user: backend
+    plan: free
