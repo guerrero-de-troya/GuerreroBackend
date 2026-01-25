@@ -21,6 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'check.abilities' => CheckAbilities::class,
             'check.any.ability' => CheckForAnyAbility::class,
+            'optional.auth.sanctum' => \App\Http\Middleware\OptionalAuthSanctum::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

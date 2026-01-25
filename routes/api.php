@@ -27,10 +27,14 @@ Route::prefix('v1')->group(function () {
             ->name('api.v1.verification.verify');
     });
 
-    // Rutas protegidas de autenticación
-    Route::middleware('auth:sanctum')->prefix('auth')->group(function () {
+    // Rutas de logout con autenticación opcional (idempotente)
+    Route::middleware('optional.auth.sanctum')->prefix('auth')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout'])->name('api.v1.auth.logout');
         Route::post('/logout-all', [AuthController::class, 'logoutAll'])->name('api.v1.auth.logout-all');
+    });
+
+    // Rutas protegidas de autenticación
+    Route::middleware('auth:sanctum')->prefix('auth')->group(function () {
         Route::get('/me', [AuthController::class, 'me'])->name('api.v1.auth.me');
         
         // Reenviar verificación de email

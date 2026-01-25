@@ -3,31 +3,33 @@
 namespace App\Http\Mappers\Auth;
 
 use App\Data\Auth\Results\RegisterResult;
+use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 
 class RegisterHttpMapper
 {
+    use ApiResponse;
+
     public function toResponse(RegisterResult $result): JsonResponse
     {
         return match ($result->reason) {
-            'success' => response()->json([
-                'success' => true,
-                'message' => 'Usuario registrado exitosamente. Por favor verifica tu email.',
-                'data' => [
+            'success' => $this->created(
+                data: [
                     'user' => $result->user,
                     'token' => $result->token,
                 ],
-            ], 201),
+                message: 'Usuario registrado exitosamente. Por favor verifica tu email.'
+            ),
 
-            'email_already_exists' => response()->json([
-                'success' => false,
-                'message' => 'El email ya está registrado.',
-            ], 422),
+            'email_already_exists' => $this->error(
+                message: 'El email ya está registrado.',
+                statusCode: 422
+            ),
 
-            default => response()->json([
-                'success' => false,
-                'message' => 'Error desconocido.',
-            ], 500),
+            default => $this->error(
+                message: 'Error desconocido.',
+                statusCode: 500
+            ),
         };
     }
 }

@@ -12,9 +12,11 @@ class LogoutAllAction
         private readonly TokenService $tokenService
     ) {}
 
-    public function execute(User $user): LogoutResult
+    public function execute(?User $user): LogoutResult
     {
-        $this->tokenService->revokeAll($user);
+        if ($user !== null) {
+            $this->tokenService->revokeAll($user);
+        }
 
         return LogoutResult::success();
     }

@@ -3,32 +3,34 @@
 namespace App\Http\Mappers\Auth;
 
 use App\Data\Auth\Results\SendEmailVerificationResult;
+use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 
 class SendEmailVerificationHttpMapper
 {
+    use ApiResponse;
+
     public function toResponse(SendEmailVerificationResult $result): JsonResponse
     {
         return match ($result->reason) {
-            'sent' => response()->json([
-                'success' => true,
-                'message' => 'Email de verificación reenviado.',
-            ], 200),
+            'sent' => $this->success(
+                message: 'Email de verificación reenviado.'
+            ),
 
-            'already_verified' => response()->json([
-                'success' => false,
-                'message' => 'El email ya ha sido verificado.',
-            ], 400),
+            'already_verified' => $this->error(
+                message: 'El email ya ha sido verificado.',
+                statusCode: 400
+            ),
 
-            'throttled' => response()->json([
-                'success' => false,
-                'message' => 'Demasiados intentos. Intenta nuevamente más tarde.',
-            ], 429),
+            'throttled' => $this->error(
+                message: 'Demasiados intentos. Intenta nuevamente más tarde.',
+                statusCode: 429
+            ),
 
-            default => response()->json([
-                'success' => false,
-                'message' => 'Error desconocido.',
-            ], 500),
+            default => $this->error(
+                message: 'Error desconocido.',
+                statusCode: 500
+            ),
         };
     }
 }

@@ -3,27 +3,29 @@
 namespace App\Http\Mappers\Auth;
 
 use App\Data\Auth\Results\ResetPasswordResult;
+use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 
 class ResetPasswordHttpMapper
 {
+    use ApiResponse;
+
     public function toResponse(ResetPasswordResult $result): JsonResponse
     {
         return match ($result->reason) {
-            'password_reset' => response()->json([
-                'success' => true,
-                'message' => 'Contraseña restablecida exitosamente.',
-            ], 200),
+            'password_reset' => $this->success(
+                message: 'Contraseña restablecida exitosamente.'
+            ),
 
-            'invalid_token' => response()->json([
-                'success' => false,
-                'message' => 'El token es inválido o ha expirado.',
-            ], 400),
+            'invalid_token' => $this->error(
+                message: 'El token es inválido o ha expirado.',
+                statusCode: 400
+            ),
 
-            default => response()->json([
-                'success' => false,
-                'message' => 'Error desconocido.',
-            ], 500),
+            default => $this->error(
+                message: 'Error desconocido.',
+                statusCode: 500
+            ),
         };
     }
 }

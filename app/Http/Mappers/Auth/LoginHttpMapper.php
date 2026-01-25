@@ -3,31 +3,33 @@
 namespace App\Http\Mappers\Auth;
 
 use App\Data\Auth\Results\LoginResult;
+use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 
 class LoginHttpMapper
 {
+    use ApiResponse;
+
     public function toResponse(LoginResult $result): JsonResponse
     {
         return match ($result->reason) {
-            'success' => response()->json([
-                'success' => true,
-                'message' => 'Sesión iniciada exitosamente',
-                'data' => [
+            'success' => $this->success(
+                data: [
                     'user' => $result->user,
                     'token' => $result->token,
                 ],
-            ], 200),
+                message: 'Sesión iniciada exitosamente'
+            ),
 
-            'invalid_credentials' => response()->json([
-                'success' => false,
-                'message' => 'Credenciales inválidas.',
-            ], 401),
+            'invalid_credentials' => $this->error(
+                message: 'Credenciales inválidas.',
+                statusCode: 401
+            ),
 
-            default => response()->json([
-                'success' => false,
-                'message' => 'Error desconocido.',
-            ], 500),
+            default => $this->error(
+                message: 'Error desconocido.',
+                statusCode: 500
+            ),
         };
     }
 }

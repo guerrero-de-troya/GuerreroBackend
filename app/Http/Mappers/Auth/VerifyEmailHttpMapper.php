@@ -3,37 +3,38 @@
 namespace App\Http\Mappers\Auth;
 
 use App\Data\Auth\Results\VerifyEmailResult;
+use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 
 class VerifyEmailHttpMapper
 {
+    use ApiResponse;
+
     public function toResponse(VerifyEmailResult $result): JsonResponse
     {
         return match ($result->reason) {
-            'verified' => response()->json([
-                'success' => true,
-                'message' => 'Email verificado exitosamente.',
-            ], 200),
+            'verified' => $this->success(
+                message: 'Email verificado exitosamente.'
+            ),
 
-            'already_verified' => response()->json([
-                'success' => true,
-                'message' => 'El email ya fue verificado.',
-            ], 200),
+            'already_verified' => $this->success(
+                message: 'El email ya fue verificado.'
+            ),
 
-            'user_not_found' => response()->json([
-                'success' => false,
-                'message' => 'Usuario no encontrado.',
-            ], 404),
+            'user_not_found' => $this->error(
+                message: 'Usuario no encontrado.',
+                statusCode: 404
+            ),
 
-            'invalid_hash' => response()->json([
-                'success' => false,
-                'message' => 'Enlace de verificación inválido.',
-            ], 403),
+            'invalid_hash' => $this->error(
+                message: 'Enlace de verificación inválido.',
+                statusCode: 403
+            ),
 
-            default => response()->json([
-                'success' => false,
-                'message' => 'Error desconocido.',
-            ], 500),
+            default => $this->error(
+                message: 'Error desconocido.',
+                statusCode: 500
+            ),
         };
     }
 }
