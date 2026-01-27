@@ -50,6 +50,36 @@ services:
         sync: false
       - key: CORS_ALLOWED_ORIGINS
         sync: false
+      # Deploy automático
+      - key: AUTO_MIGRATE
+        value: "true"
+      - key: RUN_SEEDERS
+        value: "true"
+      - key: CREATE_ADMIN_USER
+        value: "false"
+      # Credenciales del administrador
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: ADMIN_NOMBRE
+        sync: false
+      - key: ADMIN_SEGUNDO_NOMBRE
+        sync: false
+      - key: ADMIN_APELLIDO
+        sync: false
+      - key: ADMIN_SEGUNDO_APELLIDO
+        sync: false
+      - key: ADMIN_DOCUMENTO
+        sync: false
+      - key: ADMIN_TELEFONO
+        sync: false
+      - key: ADMIN_EDAD
+        sync: false
+      - key: ADMIN_CAMISA
+        sync: false
+      - key: ADMIN_EPS
+        sync: false
       - key: MAIL_MAILER
         sync: false
       - key: MAIL_HOST

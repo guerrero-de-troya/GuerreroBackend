@@ -10,7 +10,10 @@ class RolePermissionSeeder extends Seeder
 {
     public function run(): void
     {
-        // permisos para autenticación
+        // Resetear caché de permisos
+        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+
+        // Permisos para autenticación
         $authPermissions = [
             'auth.register',
             'auth.login',
@@ -22,22 +25,23 @@ class RolePermissionSeeder extends Seeder
             'auth.reset-password',
         ];
 
+        // Crear permisos solo si no existen
         foreach ($authPermissions as $permission) {
             Permission::firstOrCreate(['name' => $permission]);
         }
 
-        // Crear roles
+        // Crear roles solo si no existen
         $usuarioRole = Role::firstOrCreate(['name' => 'usuario']);
         $adminRole = Role::firstOrCreate(['name' => 'Administrador']);
         $superAdminRole = Role::firstOrCreate(['name' => 'SuperAdministrador']);
 
-        $usuarioRole->givePermissionTo($authPermissions);
-
-        $adminRole->givePermissionTo($authPermissions);
-
+        // Sincronizar permisos (sync no duplica, es idempotente)
+        $usuarioRole->syncPermissions($authPermissions);
+        $adminRole->syncPermissions($authPermissions);
+        
         // SuperAdministrador tiene todos los permisos
-        $superAdminRole->givePermissionTo(Permission::all());
+        $superAdminRole->syncPermissions(Permission::all());
 
-        $this->command->info('Roles y permisos creados exitosamente');
+        $this->command->info('Roles y permisos sincronizados exitosamente');
     }
 }

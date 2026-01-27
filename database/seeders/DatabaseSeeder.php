@@ -14,10 +14,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Seeders esenciales
         $this->call([
             RolePermissionSeeder::class,
             TemaSeeder::class,
             ParametroSeeder::class,
         ]);
+
+        // Crear usuario super administrador solo si está habilitado
+        if (env('CREATE_ADMIN_USER', true)) {
+            $this->call(SuperAdminUserSeeder::class);
+        }
     }
 }

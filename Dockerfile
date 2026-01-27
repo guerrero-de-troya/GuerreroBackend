@@ -34,7 +34,7 @@ WORKDIR /var/www/html
 # Copiar archivos de la aplicación
 COPY . .
 
-# Instalar dependencias de Composer (solo producción)
+# Instalar dependencias de Composer
 RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
 
 # Configurar permisos
@@ -42,13 +42,13 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 /var/www/html/storage \
     && chmod -R 775 /var/www/html/bootstrap/cache
 
-# Optimizar Laravel para producción
-RUN php artisan config:cache \
-    && php artisan route:cache \
-    && php artisan view:cache
+# Crear script de inicio
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Exponer puerto 80
 EXPOSE 80
 
 # Comando de inicio
+ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["apache2-foreground"]
