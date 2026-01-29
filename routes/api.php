@@ -17,7 +17,6 @@ Route::prefix('v1')->group(function () {
         // Rutas de restablecimiento de contraseña (públicas)
         Route::prefix('password')->group(function () {
             Route::post('/forgot', [PasswordResetController::class, 'forgot'])->name('api.v1.password.forgot');
-            Route::get('/reset', [PasswordResetController::class, 'showResetForm'])->name('api.v1.password.reset.form');
             Route::post('/reset', [PasswordResetController::class, 'reset'])->name('api.v1.password.reset');
         });
 

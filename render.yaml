@@ -52,11 +52,11 @@ services:
         sync: false
       # Deploy automático
       - key: AUTO_MIGRATE
-        value: "true"
+        value: true
       - key: RUN_SEEDERS
-        value: "true"
+        value: true
       - key: CREATE_ADMIN_USER
-        value: "false"
+        value: false
       # Credenciales del administrador
       - key: ADMIN_EMAIL
         sync: false
