@@ -6,19 +6,40 @@ echo " Iniciando aplicación Laravel..."
 
 # Mostrar variables de conexión para debug
 echo " Variables de conexión:"
-echo "   DB_CONNECTION: ${DB_CONNECTION}"
-echo "   DB_HOST: ${DB_HOST}"
-echo "   DB_PORT: ${DB_PORT}"
-echo "   DB_DATABASE: ${DB_DATABASE}"
-echo "   DB_USERNAME: ${DB_USERNAME}"
+if [ -n "${DATABASE_URL}" ]; then
+    echo "   DATABASE_URL: ${DATABASE_URL:0:50}..." # Mostrar solo primeros 50 caracteres por seguridad
+else
+    echo "   DATABASE_URL: (no configurada)"
+fi
+echo "   DB_CONNECTION: ${DB_CONNECTION:-no configurada}"
+echo "   DB_HOST: ${DB_HOST:-no configurada}"
+echo "   DB_PORT: ${DB_PORT:-no configurada}"
+echo "   DB_DATABASE: ${DB_DATABASE:-no configurada}"
+echo "   DB_USERNAME: ${DB_USERNAME:-no configurada}"
+
+# Función para verificar conexión a la base de datos
+check_db_connection() {
+    # Intentar con db:show primero (más rápido)
+    if php artisan db:show > /dev/null 2>&1; then
+        return 0
+    fi
+    
+    # Si falla, intentar una consulta simple
+    if php artisan tinker --execute="DB::connection()->getPdo();" > /dev/null 2>&1; then
+        return 0
+    fi
+    
+    return 1
+}
 
 # Test de conectividad básico
 echo ""
 echo " Probando conectividad..."
-if command -v pg_isready > /dev/null 2>&1; then
-    pg_isready -h "${DB_HOST}" -p "${DB_PORT}" -U "${DB_USERNAME}" || true
+if [ -n "${DB_HOST}" ] && command -v pg_isready > /dev/null 2>&1; then
+    echo "   Intentando pg_isready..."
+    pg_isready -h "${DB_HOST}" -p "${DB_PORT:-5432}" -U "${DB_USERNAME}" -t 2 || echo "   pg_isready falló, continuando con verificación Laravel..."
 else
-    echo "   pg_isready no disponible, intentando conexión directa..."
+    echo "   pg_isready no disponible o DB_HOST no configurado, usando verificación Laravel..."
 fi
 
 # Esperar a que la base de datos esté lista (con timeout)
@@ -26,14 +47,14 @@ echo ""
 echo "⏳ Esperando conexión a base de datos..."
 MAX_TRIES=15
 COUNTER=0
+DB_CONNECTED=false
 
-until php artisan db:show > /dev/null 2>&1; do
+while [ $COUNTER -lt $MAX_TRIES ]; do
     COUNTER=$((COUNTER + 1))
     
-    if [ $COUNTER -gt $MAX_TRIES ]; then
-        echo "  No se pudo conectar a la base de datos después de ${MAX_TRIES} intentos"
-        echo " Continuando sin ejecutar migraciones/seeders..."
-        echo " Verifica en Render Dashboard que la base de datos 'backend-guerrero' esté creada y en estado 'Available'"
+    if check_db_connection; then
+        echo "✅ Base de datos conectada exitosamente"
+        DB_CONNECTED=true
         break
     fi
     
@@ -41,14 +62,22 @@ until php artisan db:show > /dev/null 2>&1; do
     sleep 2
 done
 
-if [ $COUNTER -le $MAX_TRIES ]; then
-    echo "Base de datos conectada"
-else
-    # Si no hay BD, solo optimizar y continuar
-    echo " Optimizando aplicación sin BD..."
-    php artisan config:cache
-    php artisan route:cache
-    php artisan view:cache
+if [ "$DB_CONNECTED" = false ]; then
+    echo "❌ No se pudo conectar a la base de datos después de ${MAX_TRIES} intentos"
+    echo ""
+    echo "Diagnóstico:"
+    echo "  - Verifica en Render Dashboard que la base de datos 'backend-guerrero' esté creada y en estado 'Available'"
+    echo "  - Verifica que las variables de entorno DB_* o DATABASE_URL estén configuradas correctamente"
+    echo "  - Verifica que el servicio de base de datos esté en la misma región que el servicio web"
+    echo ""
+    echo "⚠️  Continuando sin ejecutar migraciones/seeders..."
+    echo "⚠️  La aplicación puede no funcionar correctamente sin conexión a la base de datos"
+    echo ""
+    
+    # NO cachear configuración si la BD no está disponible para evitar problemas
+    echo " Optimizando aplicación sin BD (sin cache de configuración)..."
+    php artisan route:cache || true
+    php artisan view:cache || true
     echo " Iniciando servidor Apache..."
     exec "$@"
     exit 0
@@ -68,43 +97,43 @@ if [ "$AUTO_MIGRATE_BOOL" = "true" ] || [ "$RUN_SEEDERS_BOOL" = "true" ]; then
     
     # Ejecutar migraciones si está habilitado
     if [ "$AUTO_MIGRATE_BOOL" = "true" ]; then
-        echo "Ejecutando migraciones..."
-        php artisan migrate --force
-        
-        if [ $? -eq 0 ]; then
-            echo "Migraciones completadas"
+        echo "📦 Ejecutando migraciones..."
+        if php artisan migrate --force; then
+            echo "✅ Migraciones completadas exitosamente"
         else
-            echo "Error en migraciones"
+            echo "❌ Error al ejecutar migraciones"
+            echo "   Verifica los logs anteriores para más detalles"
             exit 1
         fi
     fi
     
     # Ejecutar seeders si está habilitado
     if [ "$RUN_SEEDERS_BOOL" = "true" ]; then
-        echo "Ejecutando seeders..."
-        php artisan db:seed --force
-        
-        if [ $? -eq 0 ]; then
-            echo "Seeders completados"
+        echo "🌱 Ejecutando seeders..."
+        if php artisan db:seed --force; then
+            echo "✅ Seeders completados exitosamente"
         else
-            echo " Error en seeders"
+            echo "❌ Error al ejecutar seeders"
+            echo "   Verifica los logs anteriores para más detalles"
             exit 1
         fi
     fi
     
     # Optimizar aplicación
-    echo " Optimizando aplicación..."
+    echo "⚡ Optimizando aplicación..."
     php artisan config:cache
     php artisan route:cache
     php artisan view:cache
-    echo " Optimización completada"
+    echo "✅ Optimización completada"
     
 else
-    echo "Setup automático deshabilitado"
+    echo "ℹ️  Setup automático deshabilitado"
     # Solo optimizar
+    echo "⚡ Optimizando aplicación..."
     php artisan config:cache
     php artisan route:cache
     php artisan view:cache
+    echo "✅ Optimización completada"
 fi
 
 echo "Iniciando servidor Apache..."
