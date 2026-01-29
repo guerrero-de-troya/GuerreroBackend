@@ -20,6 +20,11 @@ services:
         value: database
       - key: DB_CONNECTION
         value: pgsql
+      - key: DATABASE_URL
+        fromDatabase:
+          name: backend-guerrero
+          property: connectionString
+      # Estas también por compatibilidad
       - key: DB_HOST
         fromDatabase:
           name: backend-guerrero

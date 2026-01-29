@@ -12,9 +12,19 @@ echo "   DB_PORT: ${DB_PORT}"
 echo "   DB_DATABASE: ${DB_DATABASE}"
 echo "   DB_USERNAME: ${DB_USERNAME}"
 
-# Esperar a que la base de datos esté lista
-echo " Esperando conexión a base de datos..."
-MAX_TRIES=30
+# Test de conectividad básico
+echo ""
+echo " Probando conectividad..."
+if command -v pg_isready > /dev/null 2>&1; then
+    pg_isready -h "${DB_HOST}" -p "${DB_PORT}" -U "${DB_USERNAME}" || true
+else
+    echo "   pg_isready no disponible, intentando conexión directa..."
+fi
+
+# Esperar a que la base de datos esté lista (con timeout)
+echo ""
+echo "⏳ Esperando conexión a base de datos..."
+MAX_TRIES=15
 COUNTER=0
 
 until php artisan db:show > /dev/null 2>&1; do
