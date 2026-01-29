@@ -3,16 +3,17 @@
 namespace App\Notifications;
 
 use Illuminate\Auth\Notifications\ResetPassword;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Support\Facades\Config;
 
 class ResetPasswordNotification extends ResetPassword
 {
     protected function resetUrl($notifiable): string
     {
-        $appUrl = Config::get('app.url');
-        
-        return "{$appUrl}/api/v1/auth/password/reset?token={$this->token}&email={$notifiable->getEmailForPasswordReset()}";
+        $frontendUrl = rtrim(Config::get('app.frontend_url', Config::get('app.url')), '/');
+        $email = urlencode($notifiable->getEmailForPasswordReset());
+
+        return "{$frontendUrl}/recuperar-contrasena?token={$this->token}&email={$email}";
     }
 
     public function toMail($notifiable): MailMessage

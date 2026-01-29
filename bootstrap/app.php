@@ -6,6 +6,8 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Exceptions\InvalidSignatureException;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Validation\ValidationException;
 use Laravel\Sanctum\Http\Middleware\CheckAbilities;
 use Laravel\Sanctum\Http\Middleware\CheckForAnyAbility;
@@ -53,6 +55,18 @@ return Application::configure(basePath: dirname(__DIR__))
                     ],
                     404
                 );
+            }
+        });
+
+        $exceptions->render(function (InvalidSignatureException $e, Request $request) {
+            if ($request->is('api/*') && $request->is('*auth/email/verify*') && ! $request->expectsJson()) {
+                $base = rtrim(Config::get('app.frontend_url', Config::get('app.url')), '/');
+
+                return redirect($base.'/verificar-email?'.http_build_query(['verified' => '0', 'error' => 'Enlace inválido o expirado.']));
+            }
+
+            if ($request->is('api/*')) {
+                return response()->json(['success' => false, 'message' => 'Enlace inválido o expirado.'], 403);
             }
         });
     })->create();
