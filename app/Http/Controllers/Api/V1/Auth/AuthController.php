@@ -36,8 +36,11 @@ class AuthController extends Controller
             };
         }
 
+        $userResource = new UserResource($result->user);
+        $userResource->withToken($result->token);
+        
         return $this->created(
-            data: (new UserResource($result->user))->withToken($result->token),
+            data: $userResource,
             message: 'Usuario registrado exitosamente. Por favor verifica tu email.'
         );
     }
@@ -54,8 +57,11 @@ class AuthController extends Controller
             };
         }
 
+        $userResource = new UserResource($result->user);
+        $userResource->withToken($result->token);
+        
         return $this->success(
-            data: (new UserResource($result->user))->withToken($result->token),
+            data: $userResource,
             message: 'Sesión iniciada exitosamente'
         );
     }

@@ -7,6 +7,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserResource extends JsonResource
 {
+    protected ?string $token = null;
+
     /**
      * Transform the resource into an array.
      *
@@ -14,7 +16,7 @@ class UserResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return [
+        $data = [
             'id' => $this->id,
             'email' => $this->email,
             'email_verified_at' => $this->email_verified_at,
@@ -23,13 +25,19 @@ class UserResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
+
+        // Incluir token si está disponible
+        if ($this->token !== null) {
+            $data['token'] = $this->token;
+        }
+
+        return $data;
     }
 
-    public function withToken(string $token): array
+    public function withToken(string $token): static
     {
-        return [
-            'user' => $this->toArray(request()),
-            'token' => $token,
-        ];
+        $this->token = $token;
+        
+        return $this;
     }
 }

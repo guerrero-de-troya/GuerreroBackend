@@ -9,6 +9,7 @@ use App\Services\Auth\PasswordService;
 use App\Services\Auth\TokenService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class RegisterAction
 {
@@ -37,7 +38,15 @@ class RegisterAction
             return $user;
         });
 
-        event(new Registered($user));
+        try {
+            event(new Registered($user));
+        } catch (\Exception $e) {
+            Log::warning('Error al enviar email de verificación después del registro', [
+                'user_id' => $user->id,
+                'email' => $user->email,
+                'error' => $e->getMessage(),
+            ]);
+        }
 
         $token = $this->tokenService->create($user);
 
