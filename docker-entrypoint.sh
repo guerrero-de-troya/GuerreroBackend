@@ -22,28 +22,41 @@ echo "   RUN_SEEDERS: $RUN_SEEDERS_BOOL"
 
 # Ejecutar setup de producción si está habilitado
 if [ "$AUTO_MIGRATE_BOOL" = "true" ] || [ "$RUN_SEEDERS_BOOL" = "true" ]; then
-    echo " Ejecutando configuración de producción..."
+    echo "Ejecutando configuración de producción..."
     
-    SETUP_ARGS="--force"
-    
+    # Ejecutar migraciones si está habilitado
     if [ "$AUTO_MIGRATE_BOOL" = "true" ]; then
-        SETUP_ARGS="$SETUP_ARGS --migrate"
-        echo "   ✓ Migraciones habilitadas"
+        echo "Ejecutando migraciones..."
+        php artisan migrate --force
+        
+        if [ $? -eq 0 ]; then
+            echo "Migraciones completadas"
+        else
+            echo "Error en migraciones"
+            exit 1
+        fi
     fi
     
+    # Ejecutar seeders si está habilitado
     if [ "$RUN_SEEDERS_BOOL" = "true" ]; then
-        SETUP_ARGS="$SETUP_ARGS --seed"
-        echo "   ✓ Seeders habilitados"
+        echo "Ejecutando seeders..."
+        php artisan db:seed --force
+        
+        if [ $? -eq 0 ]; then
+            echo "Seeders completados"
+        else
+            echo " Error en seeders"
+            exit 1
+        fi
     fi
     
-    php artisan app:setup-production $SETUP_ARGS
+    # Optimizar aplicación
+    echo " Optimizando aplicación..."
+    php artisan config:cache
+    php artisan route:cache
+    php artisan view:cache
+    echo " Optimización completada"
     
-    if [ $? -eq 0 ]; then
-        echo " Setup completado"
-    else
-        echo " Error en setup"
-        exit 1
-    fi
 else
     echo "Setup automático deshabilitado"
     # Solo optimizar
