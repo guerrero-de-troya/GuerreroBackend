@@ -2,15 +2,47 @@
 
 set -e
 
-echo "Iniciando aplicación Laravel..."
+echo " Iniciando aplicación Laravel..."
+
+# Mostrar variables de conexión para debug
+echo " Variables de conexión:"
+echo "   DB_CONNECTION: ${DB_CONNECTION}"
+echo "   DB_HOST: ${DB_HOST}"
+echo "   DB_PORT: ${DB_PORT}"
+echo "   DB_DATABASE: ${DB_DATABASE}"
+echo "   DB_USERNAME: ${DB_USERNAME}"
 
 # Esperar a que la base de datos esté lista
-echo "Esperando conexión a base de datos..."
+echo " Esperando conexión a base de datos..."
+MAX_TRIES=30
+COUNTER=0
+
 until php artisan db:show > /dev/null 2>&1; do
-    echo "Base de datos no disponible, reintentando en 2s..."
+    COUNTER=$((COUNTER + 1))
+    
+    if [ $COUNTER -gt $MAX_TRIES ]; then
+        echo "  No se pudo conectar a la base de datos después de ${MAX_TRIES} intentos"
+        echo " Continuando sin ejecutar migraciones/seeders..."
+        echo " Verifica en Render Dashboard que la base de datos 'backend-guerrero' esté creada y en estado 'Available'"
+        break
+    fi
+    
+    echo "Base de datos no disponible, reintentando en 2s... (intento $COUNTER/$MAX_TRIES)"
     sleep 2
 done
-echo " Base de datos conectada"
+
+if [ $COUNTER -le $MAX_TRIES ]; then
+    echo "Base de datos conectada"
+else
+    # Si no hay BD, solo optimizar y continuar
+    echo " Optimizando aplicación sin BD..."
+    php artisan config:cache
+    php artisan route:cache
+    php artisan view:cache
+    echo " Iniciando servidor Apache..."
+    exec "$@"
+    exit 0
+fi
 
 # Normalizar variables de entorno
 AUTO_MIGRATE_BOOL="${AUTO_MIGRATE:-false}"
